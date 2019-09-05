@@ -26,11 +26,7 @@ public class Test_02 : MonoBehaviour
         }
     }
     
-
-
-
-   
-
+    
     private class accessor<T>
     {
         private System.Action<T> setter;
@@ -213,13 +209,7 @@ public class Test_02 : MonoBehaviour
     #endregion
     void Update()
     {
-        /*
-        btnMech(ref _1, p_1);
-        btnMech(ref _0, p_0);
-        btnMech(ref del, pdel);
-        Maintain();
-        MM();
-        */
+      
         GetOffsetAdjuster().Update();
         GetRadiousAdjuster().Update();
     }
