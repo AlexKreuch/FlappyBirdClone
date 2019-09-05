@@ -13,13 +13,13 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - BGCollector
+  - Background
+  - Ground
+  - Player
+  - Pipe
+  - PipeCollector
+  - PipeHolder
   - 
   - 
   - 
