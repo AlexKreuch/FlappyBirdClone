@@ -16,28 +16,42 @@ public class Test_00 : MonoBehaviour
         }
     }
 
-    public GameObject[] birds = new GameObject[0];
+    private GameObject[] gameObjects = new GameObject[0];
 
-    private Vector3[] posList = null;
-
-    private void setup()
+    public bool flag = false;
+    public bool btn = false;
+    private void press_btn()
     {
-        posList = new Vector3[birds.Length];
-        int cur = 0;
-        foreach (var x in birds)
+        const string tag0 = "Ground", tag1 = "Background";
+        var arr = FindObjectsOfType<GameObject>();
+        var lst = new List<GameObject>();
+        foreach (var x in arr)
         {
-            posList[cur++] = x.transform.position;
+            if (x.tag == tag0 || x.tag == tag1) lst.Add(x);
         }
-    }
-    private void adjust()
-    {
-        int cur = 0;
-        foreach (var x in birds)
-        {
-            x.transform.position = posList[cur++];
-        }
+        gameObjects = lst.ToArray();
+        flag = !flag;
     }
 
-    void Start() { setup(); }
-    void Update() { adjust(); }
+    public float xoffset = 0f;
+    private float curoffset = 0f;
+    private void maintainOffset()
+    {
+        var d = xoffset - curoffset;
+        if (d == 0f) return;
+        var vec = new Vector3(d,0f,0f);
+        foreach (var x in gameObjects)
+        {
+            x.transform.position += vec;
+        }
+        curoffset = xoffset;
+    }
+
+    void Update()
+    {
+        btnMech(ref btn, press_btn);
+        maintainOffset();
+    }
+   
+
 }
