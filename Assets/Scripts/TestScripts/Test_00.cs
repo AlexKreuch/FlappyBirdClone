@@ -16,41 +16,34 @@ public class Test_00 : MonoBehaviour
         }
     }
 
-    private GameObject[] gameObjects = new GameObject[0];
+    public GameObject theObject;
 
-    public bool flag = false;
+    public int ind = 1;
+    public float width = 0f;
+
     public bool btn = false;
     private void press_btn()
     {
-        const string tag0 = "Ground", tag1 = "Background";
-        var arr = FindObjectsOfType<GameObject>();
-        var lst = new List<GameObject>();
-        foreach (var x in arr)
-        {
-            if (x.tag == tag0 || x.tag == tag1) lst.Add(x);
-        }
-        gameObjects = lst.ToArray();
-        flag = !flag;
+        Vector3 tmp = theObject.transform.position;
+        Quaternion qrt = theObject.transform.rotation;
+        tmp.x += ind * width;
+        Instantiate<GameObject>(theObject,tmp,qrt);
+        ind++;
     }
 
-    public float xoffset = 0f;
-    private float curoffset = 0f;
-    private void maintainOffset()
+    public bool getwidth = false;
+    private void rungetwidth()
     {
-        var d = xoffset - curoffset;
-        if (d == 0f) return;
-        var vec = new Vector3(d,0f,0f);
-        foreach (var x in gameObjects)
-        {
-            x.transform.position += vec;
-        }
-        curoffset = xoffset;
+        var bc = theObject.GetComponent<BoxCollider2D>();
+        width = bc.size.x;
     }
+
+
 
     void Update()
     {
         btnMech(ref btn, press_btn);
-        maintainOffset();
+        btnMech(ref getwidth, rungetwidth);
     }
    
 
