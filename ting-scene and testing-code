@@ -1,0 +1,77 @@
+[33mcommit 626632c48b8158487bb531d3124bd30f0ccaf3bd[m[33m ([m[1;36mHEAD -> [m[1;32m013[m[33m, [m[1;32m012[m[33m)[m
+Author: alexk <alexk@LAPTOP-518CEKNS>
+Date:   Thu Sep 5 20:15:06 2019 -0700
+
+    fixed gap between ground-pieces
+
+[33mcommit 753de735181a64b12aa9dedc20c469f1580b8bfb[m[33m ([m[1;32m011[m[33m)[m
+Author: alexk <alexk@LAPTOP-518CEKNS>
+Date:   Thu Sep 5 19:59:14 2019 -0700
+
+    added testing code
+
+[33mcommit 9de26a36653813e33961ca55ac91bb9d13652d04[m[33m ([m[1;32m010[m[33m)[m
+Author: alexk <alexk@LAPTOP-518CEKNS>
+Date:   Thu Sep 5 18:11:05 2019 -0700
+
+    created gamePlay-scene
+
+[33mcommit 5235ed98920c2d7f47b1ad4f68fea2e20aa5c10c[m[33m ([m[1;32m009[m[33m)[m
+Author: alexk <alexk@LAPTOP-518CEKNS>
+Date:   Thu Sep 5 15:16:07 2019 -0700
+
+    added sorting layers
+
+[33mcommit ba406b738bb662e4ecc433bd46aaa9a513c45a59[m[33m ([m[1;32m008[m[33m)[m
+Author: alexk <alexk@LAPTOP-518CEKNS>
+Date:   Thu Sep 5 14:59:10 2019 -0700
+
+    created bird prefabs
+
+[33mcommit 5a1c733e68da0189678f68a5fac9c05251446eca[m[33m ([m[1;32m007[m[33m)[m
+Author: alexk <alexk@LAPTOP-518CEKNS>
+Date:   Thu Sep 5 13:12:56 2019 -0700
+
+    added testing code
+
+[33mcommit a50d4d84d7f362d5effa1c691833cc0c1957f029[m[33m ([m[1;32m006[m[33m)[m
+Author: alexk <alexk@LAPTOP-518CEKNS>
+Date:   Thu Sep 5 10:27:07 2019 -0700
+
+    added testing code
+
+[33mcommit c880596b7863d272ea0cb37bb0120daa4f8419d9[m[33m ([m[1;32m06[m[33m)[m
+Author: alexk <alexk@LAPTOP-518CEKNS>
+Date:   Tue Sep 3 17:12:28 2019 -0700
+
+    added testing code
+
+[33mcommit fe125515691de2b6c6ad1c8865fc45189c086aca[m[33m ([m[1;32m004[m[33m)[m
+Author: alexk <alexk@LAPTOP-518CEKNS>
+Date:   Tue Sep 3 09:49:23 2019 -0700
+
+    added testing code
+
+[33mcommit c016f55e485e2e2352a9d77cfcf911e91f6c3c55[m[33m ([m[1;32m003[m[33m)[m
+Author: alexk <alexk@LAPTOP-518CEKNS>
+Date:   Thu Aug 29 15:32:06 2019 -0700
+
+    created Animation for Blue-Bird
+
+[33mcommit c08f22e1e9ccb895dab183114fba45f638748cd9[m[33m ([m[1;32m001[m[33m)[m
+Author: alexk <alexk@LAPTOP-518CEKNS>
+Date:   Thu Aug 29 12:58:38 2019 -0700
+
+    sliced sprites
+
+[33mcommit f94e77d875b2f4d9191e345bf298f7ea05bd8dc6[m[33m ([m[1;32m000[m[33m)[m
+Author: alexk <alexk@LAPTOP-518CEKNS>
+Date:   Thu Aug 29 12:32:47 2019 -0700
+
+    imported assests
+
+[33mcommit da3f3e13626f525a4a9d6bbec7439588ce4cac6f[m[33m ([m[1;32mmaster[m[33m)[m
+Author: alexk <alexk@LAPTOP-518CEKNS>
+Date:   Thu Aug 29 12:25:37 2019 -0700
+
+    starting project
