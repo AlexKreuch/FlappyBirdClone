@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.CompilerServices;
-
+using System;
 
 public class Test000 : MonoBehaviour
 {
@@ -152,7 +152,71 @@ public class Test000 : MonoBehaviour
                 SetUp(go);
             }
         }
+
+        public class KeySystem
+        {
+            public struct StrAcc
+            {
+                private Action<string> setter;
+                private Func<string> getter;
+                public string Val { get { return getter(); } set { setter(value); } }
+                public StrAcc(Action<string> s, Func<string> g) { setter = s; getter = g; }
+            }
+            private Dictionary<char, System.Action> buttons = new Dictionary<char, System.Action>();
+            public StrAcc strAcc = new StrAcc(null,null);
+            private string savedVal = "";
+            private KeySystem() { }
+            private KeySystem(Action<string> s, Func<string> g, Dictionary<char, System.Action> btns)
+            {
+                strAcc = new StrAcc(s,g);
+                buttons = btns;
+                savedVal = strAcc.Val;
+            }
+            public class Builder
+            {
+                private Action<string> _set = null;
+                private Func<string> _get = null;
+                private Dictionary<char, System.Action> dic = new Dictionary<char, Action>();
+                public Builder SetSetter(Action<string> s)
+                {
+                    _set = s;
+                    return this;
+                }
+                public Builder SetGetter(Func<string> g)
+                {
+                    _get = g;
+                    return this;
+                }
+                public Builder AddButton(char c, Action action)
+                {
+                    if(action!=null) dic.Add(c,action);
+                    return this;
+                }
+                public bool IsReady() { return _set != null && _get != null; }
+                public KeySystem Build()
+                {
+                    if (!IsReady()) return null;
+                    return new KeySystem(_set,_get,dic);
+                }
+            }
+            public static Builder MakeBuilder() { return new Builder(); }
+
+            public void Update()
+            {
+                if (strAcc.Val.Length == savedVal.Length + 1)
+                {
+                    char c = strAcc.Val[savedVal.Length];
+                    bool b = buttons.TryGetValue(c, out Action act);
+                    if (b) act();
+                }
+                savedVal = strAcc.Val;
+            }
+
+            
+        }
     }
+
+    
 
     private Utils.StatBox statbox = new Utils.StatBox();
 
@@ -207,7 +271,8 @@ public class Test000 : MonoBehaviour
 
     void Update()
     {
-        MoveUp();
+        // MoveUp();
+        keySystem.Update();
     }
 
 
@@ -233,18 +298,46 @@ public class Test000 : MonoBehaviour
                 break;
             case CircleName:
                 rb = gameObject.AddComponent<Rigidbody2D>();
-                rb.gravityScale = 1;
+                rb.gravityScale = 0;
                 cl = gameObject.GetComponent<Collider2D>();
             //    cl.isTrigger = true;
                 break;
         }
     }
 
+    private Utils.KeySystem keySystem = null;
+    
+    private void SetUpKeySystem()
+    {
+        const float sp = .5f;
+        Action MakeAction(float x, float y, float z)
+        {
+            var vec = new Vector3(x, y, z);
+            void f()
+            {
+                gameObject.transform.position += Time.deltaTime * vec;
+            }
+            return f;
+        }
+        keySystem = Utils.KeySystem.MakeBuilder()
+            .SetGetter(() => keyB)
+            .SetSetter(v => { keyB = v; })
+            .AddButton('j',MakeAction(sp,0f,0f))
+            .AddButton('l', MakeAction(-sp, 0f, 0f))
+            .AddButton('i', MakeAction(0f, sp, 0f))
+            .AddButton('k', MakeAction(0f, -sp, 0f))
+            .Build();
+
+    }
+    public string keyB = ""; 
+
+
     void Start()
     {
         SetUp();
+        SetUpKeySystem();
     }
-
+    
 
 }
 
