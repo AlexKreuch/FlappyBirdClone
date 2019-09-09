@@ -33,7 +33,7 @@ public class Bird : MonoBehaviour
     #endregion
 
     #region Movement-helpers
-    void Awake() { MakeInstance(); }
+  
 
     private void Movement()
     {
@@ -60,81 +60,17 @@ public class Bird : MonoBehaviour
     }
 
     #endregion
-    
 
-    void FixedUpdate()
-    {
-      // Movement();
-    }
+
+    void Awake() { MakeInstance(); }
 
     void Update()
     {
         Movement();
         MaintainCameraOffset();
-        // HoldPos();
-        saveBird();
     }
 
-    public float limit = 0f;
-    struct Acc<T>
-    {
-        private System.Func<T> getter;
-        private System.Action<T> setter;
-        public T VAL
-        {
-            get{ return getter(); }
-            set { setter(value); }
-        }
-        public Acc(System.Func<T> g, System.Action<T> s) { getter = g; setter = s; }
-        public Acc(T df)
-        {
-            T g() { return df; }
-            void s(T v) { }
-            getter = g;
-            setter = s;
-        }
-    }
-    private Acc<float> MakeYAcc(float center)
-    {
-        float g(){ return center - this.transform.position.y; }
-        void s(float v)
-        {
-            Vector3 tmp = this.transform.position;
-            tmp.y = center - v;
-            this.transform.position = tmp;
-        }
-        return new Acc<float>(g,s);
-    }
-    private class Holder
-    {
-        private static bool isset = false;
-        private static float limit = 0f;
-        private static Acc<float> acc = new Acc<float>(0f);
-        public static void SetAcc(Acc<float> a, float lim) { acc = a; limit = Mathf.Abs(lim); isset = true; }
-        public static bool Isset() { return isset; }
-        public static void Update()
-        {
-            if (limit == 0f) { acc.VAL = 0f; return; }
-            acc.VAL = Mathf.Clamp(acc.VAL,-1*limit,limit);
-        }
-    }
-    private void HoldPos()
-    {
-        if (Holder.Isset()) Holder.Update();
-        else
-        {
-            Holder.SetAcc(MakeYAcc(this.transform.position.y), limit);
-        }
-    }
+  
 
-    private void saveBird()
-    {
-        const float limit = -4f;
-        Vector3 tmp = this.transform.position;
-        if (tmp.y < limit)
-        {
-            tmp.y = limit;
-            this.transform.position = tmp;
-        }
-    }
+    
 }

@@ -59,49 +59,6 @@ public class BGCollector : MonoBehaviour
         this.transform.position = Camera.main.transform.position + cameraOffset;
     }
 
-    void OnTriggerEnter(Collider collider)
-    {
-     
-        string tg = collider.tag;
-        Vector3 tmp = new Vector3();
-        
-        switch (tg)
-        {
-            case bgtag:
-                tmp = collider.transform.position;
-                tmp.x += bg_offset;
-                collider.transform.position = tmp;
-                break;
-            case grtag:
-                tmp = collider.transform.position;
-                tmp.x += gr_offset;
-                collider.transform.position = tmp;
-                break;
-            default:break;
-        }
-    }
-
-    void OnCollisionEnter(Collision collision)
-    {
-        var collider = collision.collider;
-        string tg = collider.tag;
-        Vector3 tmp = new Vector3();
-
-        switch (tg)
-        {
-            case bgtag:
-                tmp = collider.transform.position;
-                tmp.x += bg_offset;
-                collider.transform.position = tmp;
-                break;
-            case grtag:
-                tmp = collider.transform.position;
-                tmp.x += gr_offset;
-                collider.transform.position = tmp;
-                break;
-            default: break;
-        }
-    }
 
     void OnTriggerEnter2D(Collider2D collider)
     {
@@ -129,7 +86,6 @@ public class BGCollector : MonoBehaviour
     {
         ComputeOffsets();
     }
-    void Start() {  }
     void Update()
     {
         MaintainPos();
