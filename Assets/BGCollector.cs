@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BGCollector : MonoBehaviour
 {
-    private const string bgtag = "BackGround"; // bgtag:=Background-tag
+    private const string bgtag = "Background"; // bgtag:=Background-tag
     private const string grtag = "Ground"; // grtag:=Ground-tag
 
     [SerializeField]
@@ -20,7 +20,8 @@ public class BGCollector : MonoBehaviour
         /*
            NOTE : 
               * bg:=Background ; gr:=Ground
-               vals := [ <bg-started> , bg-width , bg-offset , <bg-started> , gr-width , gr-offset ]
+               vals := [ <bg-started> , bg-width , bg-offset , <gr-started> , gr-width , gr-offset ]
+                              0             1           2          3               4           5
          */
         var objs = FindObjectsOfType<GameObject>();
         float[] vals = new float[] { 0f, 0f, 0f, 0f, 0f, 0f };
@@ -50,6 +51,7 @@ public class BGCollector : MonoBehaviour
         gr_offset = vals[5];
 
         cameraOffset = this.transform.position - Camera.main.transform.position;
+        
     }
 
     private void MaintainPos()
@@ -127,7 +129,7 @@ public class BGCollector : MonoBehaviour
     {
         ComputeOffsets();
     }
-    void Start() { ComputeOffsets(); }
+    void Start() {  }
     void Update()
     {
         MaintainPos();

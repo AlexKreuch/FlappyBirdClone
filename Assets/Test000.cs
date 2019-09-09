@@ -322,8 +322,8 @@ public class Test000 : MonoBehaviour
         keySystem = Utils.KeySystem.MakeBuilder()
             .SetGetter(() => keyB)
             .SetSetter(v => { keyB = v; })
-            .AddButton('j',MakeAction(sp,0f,0f))
-            .AddButton('l', MakeAction(-sp, 0f, 0f))
+            .AddButton('j',MakeAction(-sp,0f,0f))
+            .AddButton('l', MakeAction(sp, 0f, 0f))
             .AddButton('i', MakeAction(0f, sp, 0f))
             .AddButton('k', MakeAction(0f, -sp, 0f))
             .Build();
