@@ -78,6 +78,7 @@ public class Bird : MonoBehaviour
         GameObject.FindGameObjectWithTag(FlapButtonName)
             .GetComponent<Button>()
             .onClick.AddListener(Flap);
+        
         #endregion
     }
 
