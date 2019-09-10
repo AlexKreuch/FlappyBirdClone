@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Bird : MonoBehaviour
 {
@@ -19,6 +20,7 @@ public class Bird : MonoBehaviour
     }
 
     #region fields
+    private const string FlapButtonName = "FlapButton";
     private const string FlappingTriggerName = "Flapping";
     [SerializeField]
     private float horizontalSpeed = 10f, boostSpeed = 5f;
@@ -29,12 +31,19 @@ public class Bird : MonoBehaviour
     private Animator theAnimator;
 
     private float cameraOffset = 0f;
-
     #endregion
 
     #region Movement-helpers
-  
 
+    private void MaintainRotation()
+    {
+        const float maxSpeed = 5f, minSpeed = -12.8542f;
+
+        float yvel = theRigidbody.velocity.y;
+        float zRotation = yvel < 0 ? Mathf.Lerp(0, -45, yvel / minSpeed) : Mathf.Lerp(0, 45, yvel / maxSpeed);
+        Vector3 vec = new Vector3(0f,0f,zRotation);
+        gameObject.transform.rotation = Quaternion.Euler(vec);
+    }
     private void Movement()
     {
         this.transform.position += new Vector3(horizontalSpeed * Time.deltaTime, 0f, 0f);
@@ -44,13 +53,13 @@ public class Bird : MonoBehaviour
             theRigidbody.velocity = new Vector3(0f, boostSpeed, 0f);
             theAnimator.SetBool(FlappingTriggerName, true);
         }
+        MaintainRotation();
     }
     public void Flap()
     {
         flappedWings = true;
-        Debug.Log("pressed");
     }
-    private void RegisterFlap() { theAnimator.SetBool(FlappingTriggerName, false); Debug.Log("register_flap"); }
+    private void RegisterFlap() { theAnimator.SetBool(FlappingTriggerName, false);  }
 
     private void MaintainCameraOffset()
     {
@@ -62,7 +71,15 @@ public class Bird : MonoBehaviour
     #endregion
 
 
-    void Awake() { MakeInstance(); }
+    void Awake()
+    {
+        MakeInstance();
+        #region setup flap-button
+        GameObject.FindGameObjectWithTag(FlapButtonName)
+            .GetComponent<Button>()
+            .onClick.AddListener(Flap);
+        #endregion
+    }
 
     void Update()
     {

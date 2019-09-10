@@ -6,7 +6,7 @@ using System;
 [ExecuteAlways]
 public class Test_00 : MonoBehaviour
 {
-   
+
     private void btnMech(ref bool btn, System.Action action)
     {
         if (btn)
