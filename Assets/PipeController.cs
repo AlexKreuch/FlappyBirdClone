@@ -55,7 +55,11 @@ public class PipeController : MonoBehaviour
      * **/
     private void SetPipePos(GameObject pipeHolder)
     {
-        // TODO
+        const float max = 2f;
+        const float min = -1.4f;
+        var tmp = pipeHolder.transform.position;
+        tmp.y = Random.Range(min,max);
+        pipeHolder.transform.position = tmp;
     }
 
     /* Move a pipe from the far left up to the front
