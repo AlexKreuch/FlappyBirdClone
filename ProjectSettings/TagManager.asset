@@ -9,6 +9,8 @@ TagManager:
   - Ground
   - Pipe
   - PipeHolder
+  - PipeGate
+  - PipeCollector
   layers:
   - Default
   - TransparentFX
