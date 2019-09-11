@@ -47,7 +47,7 @@ public class PipeController : MonoBehaviour
         pipeOffset = (_2nd - _1st) * holderCount;
     }
     
-    [SerializeField]
+
     private float pipeOffset = 0f; // the horizontal distance a pipeHolder must be moved to be at the front
 
     /* Randomly set the vertical position of a given pipeHolder

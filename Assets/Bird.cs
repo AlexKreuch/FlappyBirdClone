@@ -8,6 +8,7 @@ public class Bird : MonoBehaviour
     public static Bird instance;
 
 
+
     private void MakeInstance()
     {
         if (instance == null)
@@ -29,6 +30,10 @@ public class Bird : MonoBehaviour
     private Rigidbody2D theRigidbody;
     [SerializeField]
     private Animator theAnimator;
+    [SerializeField]
+    private AudioSource audioSource;
+    [SerializeField]
+    private AudioClip[] audioClips; // [flapping , ding , dead]
 
     private float cameraOffset = 0f;
     #endregion

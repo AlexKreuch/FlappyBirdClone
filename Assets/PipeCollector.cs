@@ -23,7 +23,6 @@ public class PipeCollector : MonoBehaviour
     private void ComputeCameraOffset()
     {
         cameraOffset = gameObject.transform.position.x - Camera.main.transform.position.x;
-        Debug.Log("offset="+cameraOffset);
     }
     private void FollowCamera()
     {
