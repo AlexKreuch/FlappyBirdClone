@@ -101,14 +101,19 @@ public class Bird : MonoBehaviour
 
     #region Movement-helpers
 
+    
+    /* Tilt the Bird according to its vertical movement.
+     * 
+     * 
+     * 
+     * **/
     private void MaintainRotation()
     {
-        const float maxSpeed = 5f, minSpeed = -12.8542f;
-
+        const float maxSpeed = 20f, minSpeed = -12.8542f;
         float yvel = theRigidbody.velocity.y;
         float zRotation = yvel < 0 ? Mathf.Lerp(0, -45, yvel / minSpeed) : Mathf.Lerp(0, 45, yvel / maxSpeed);
-        Vector3 vec = new Vector3(0f,0f,zRotation);
-        gameObject.transform.rotation = Quaternion.Euler(vec);
+        Vector3 rotation = new Vector3(0f,0f,zRotation);
+        gameObject.transform.rotation = Quaternion.Euler(rotation);
     }
     private void Movement()
     {
@@ -121,6 +126,20 @@ public class Bird : MonoBehaviour
             AudioController.GetInstance().PlayFlapping();
            
         }
+        MaintainRotation();
+    }
+    private void _Movement()
+    {
+        var tmp = theRigidbody.velocity;
+        tmp.x = horizontalSpeed;
+        if (flappedWings)
+        {
+            flappedWings = false;
+            tmp.y = boostSpeed;
+            theAnimator.SetBool(FlappingTriggerName, true);
+            AudioController.GetInstance().PlayFlapping();
+        }
+        theRigidbody.velocity = tmp;
         MaintainRotation();
     }
     public void Flap()
@@ -142,6 +161,7 @@ public class Bird : MonoBehaviour
     void Awake()
     {
         MakeInstance();
+        Debug.Log("fixed-movement attempt");
         #region setup flap-button
         GameObject.FindGameObjectWithTag(FlapButtonName)
             .GetComponent<Button>()
@@ -153,11 +173,11 @@ public class Bird : MonoBehaviour
 
     void Update()
     {
-        Movement();
+        _Movement();
         MaintainCameraOffset();
     }
 
-  
-
+    
+    
     
 }

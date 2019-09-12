@@ -131,5 +131,8 @@ public class Test_001 : MonoBehaviour
         btnMech(ref reset, ()=> { CloneMech.Reset(); });
     }
 
+    
+
+   
 }
 
