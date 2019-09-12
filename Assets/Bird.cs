@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Runtime.CompilerServices;
 
 public class Bird : MonoBehaviour
 {
@@ -47,8 +48,8 @@ public class Bird : MonoBehaviour
             #region check inputs
             Debug.Assert
                 (
-                    auSo!=null && clipArr!=null && clipArr.Length==3 && 
-                    clipArr[0]!=null && clipArr[1]!=null && clipArr[2]!=null
+                    auSo != null && clipArr != null && clipArr.Length == 3 &&
+                    clipArr[0] != null && clipArr[1] != null && clipArr[2] != null
                     ,
                     "INVALID AudioController-setup"
                 );
@@ -69,8 +70,8 @@ public class Bird : MonoBehaviour
         public void PlayDing() { PlaySound(DingSoundIndex); }
         public void PlayDead() { PlaySound(DeadSoundIndex); }
 
-      
-        
+
+
     }
     private void SetUpAudioController()
     {
@@ -101,7 +102,7 @@ public class Bird : MonoBehaviour
 
     #region Movement-helpers
 
-    
+
     /* Tilt the Bird according to its vertical movement.
      * 
      * 
@@ -112,7 +113,7 @@ public class Bird : MonoBehaviour
         const float maxSpeed = 20f, minSpeed = -12.8542f;
         float yvel = theRigidbody.velocity.y;
         float zRotation = yvel < 0 ? Mathf.Lerp(0, -45, yvel / minSpeed) : Mathf.Lerp(0, 45, yvel / maxSpeed);
-        Vector3 rotation = new Vector3(0f,0f,zRotation);
+        Vector3 rotation = new Vector3(0f, 0f, zRotation);
         gameObject.transform.rotation = Quaternion.Euler(rotation);
     }
     private void Movement()
@@ -124,7 +125,7 @@ public class Bird : MonoBehaviour
             theRigidbody.velocity = new Vector3(0f, boostSpeed, 0f);
             theAnimator.SetBool(FlappingTriggerName, true);
             AudioController.GetInstance().PlayFlapping();
-           
+
         }
         MaintainRotation();
     }
@@ -146,7 +147,7 @@ public class Bird : MonoBehaviour
     {
         flappedWings = true;
     }
-    private void RegisterFlap() { theAnimator.SetBool(FlappingTriggerName, false);  }
+    private void RegisterFlap() { theAnimator.SetBool(FlappingTriggerName, false); }
 
     private void MaintainCameraOffset()
     {

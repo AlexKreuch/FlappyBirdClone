@@ -129,10 +129,20 @@ public class Test_001 : MonoBehaviour
     {
         btnMech(ref clone, ()=> { CloneMech.Clone(theObject, space); });
         btnMech(ref reset, ()=> { CloneMech.Reset(); });
+        btnMech(ref setPipesToTigger, SetPipHoldersToTrigger);
     }
 
-    
+    void SetPipHoldersToTrigger()
+    {
+        const string holderTag = "PipeHolder";
+        var list = FindObjectsOfType<Collider2D>();
+        foreach (var x in list)
+        {
+            if (x.tag == holderTag) x.isTrigger = true;
+        }
+    }
 
+    public bool setPipesToTigger = false;
    
 }
 
