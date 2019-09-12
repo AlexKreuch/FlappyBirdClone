@@ -116,20 +116,8 @@ public class Bird : MonoBehaviour
         Vector3 rotation = new Vector3(0f, 0f, zRotation);
         gameObject.transform.rotation = Quaternion.Euler(rotation);
     }
-    private void Movement()
-    {
-        this.transform.position += new Vector3(horizontalSpeed * Time.deltaTime, 0f, 0f);
-        if (flappedWings)
-        {
-            flappedWings = false;
-            theRigidbody.velocity = new Vector3(0f, boostSpeed, 0f);
-            theAnimator.SetBool(FlappingTriggerName, true);
-            AudioController.GetInstance().PlayFlapping();
 
-        }
-        MaintainRotation();
-    }
-    private void _Movement()
+    private void Movement()
     {
         var tmp = theRigidbody.velocity;
         tmp.x = horizontalSpeed;
@@ -162,7 +150,6 @@ public class Bird : MonoBehaviour
     void Awake()
     {
         MakeInstance();
-        Debug.Log("fixed-movement attempt");
         #region setup flap-button
         GameObject.FindGameObjectWithTag(FlapButtonName)
             .GetComponent<Button>()
@@ -174,11 +161,17 @@ public class Bird : MonoBehaviour
 
     void Update()
     {
-        _Movement();
+        Movement();
         MaintainCameraOffset();
     }
 
-    
+  
+    void OnTriggerEnter2D(Collider2D collider)
+    {
+        const string gateTag = "PipeGate";
+        if (collider.tag == gateTag) AudioController.GetInstance().PlayDing();
+    }
+
     
     
 }
