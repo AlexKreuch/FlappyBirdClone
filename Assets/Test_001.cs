@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteAlways]
 public class Test_001 : MonoBehaviour
 {
     private const string lowerPipeName = "Pipe_Green";
@@ -130,6 +129,7 @@ public class Test_001 : MonoBehaviour
         btnMech(ref clone, ()=> { CloneMech.Clone(theObject, space); });
         btnMech(ref reset, ()=> { CloneMech.Reset(); });
         btnMech(ref setPipesToTigger, SetPipHoldersToTrigger);
+        moveBird();
     }
 
     void SetPipHoldersToTrigger()
@@ -143,6 +143,19 @@ public class Test_001 : MonoBehaviour
     }
 
     public bool setPipesToTigger = false;
-   
+
+    void moveBird()
+    {
+        const float space = 1f;
+        float delta = 0f;
+        if (Input.GetKeyDown(KeyCode.I)) delta += space;
+        if (Input.GetKeyDown(KeyCode.K)) delta -= space;
+        if (delta != 0f)
+        {
+            var tmp = Bird.instance.transform.position;
+            tmp.y += delta;
+            Bird.instance.transform.position = tmp;
+        }
+    }
 }
 

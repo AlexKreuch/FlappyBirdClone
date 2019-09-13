@@ -60,23 +60,37 @@ public class Bird : MonoBehaviour
             clips = clipArr;
         }
 
-        private void PlaySound(int index)
+        private void PlaySoundV0(int index)
         {
             if (!isSetUp) return;
             audioSource.clip = clips[index];
             audioSource.Play();
         }
+        private void PlaySoundV1(int index)
+        {
+            if (!isSetUp) return;
+            audioSource.PlayOneShot(clips[index]);
+        }
         public void PlayFlapping() { PlaySound(FlappingSoundIndex); }
         public void PlayDing() { PlaySound(DingSoundIndex); }
         public void PlayDead() { PlaySound(DeadSoundIndex); }
 
-
+        private System.Func<bool> accessFlag = null;
+        private void PlaySound(int index)
+        {
+            bool flg = accessFlag == null ? false : accessFlag();
+            if (flg) PlaySoundV1(index);
+            else PlaySoundV0(index);
+        }
+        public void SetFlagAccess(System.Func<bool> acc) { accessFlag = acc; }
 
     }
     private void SetUpAudioController()
     {
         AudioController.GetInstance().SetUp(audioSource, audioClips);
+        AudioController.GetInstance().SetFlagAccess( ()=>useImprovedSound );
     }
+    public bool useImprovedSound = false;
     #endregion
 
     #region fields
@@ -172,6 +186,7 @@ public class Bird : MonoBehaviour
         if (collider.tag == gateTag) AudioController.GetInstance().PlayDing();
     }
 
+    
     
     
 }
