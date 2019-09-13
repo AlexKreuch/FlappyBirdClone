@@ -8,7 +8,7 @@ public class Bird : MonoBehaviour
 {
     public static Bird instance;
 
-
+   
 
     private void MakeInstance()
     {
@@ -21,6 +21,45 @@ public class Bird : MonoBehaviour
             Destroy(this);
     }
 
+    #region AnimatorUtil-class (and set-up method)
+    /* Use this to interact with Animator
+     * 
+     * **/
+    private class AnimatorUtil
+    {
+
+  
+
+        private static AnimatorUtil instance = new AnimatorUtil();
+        public static AnimatorUtil GetInst() { return instance; }
+
+        private Animator animator = null;
+        public void SetUp(Animator anim) { animator = anim; }
+
+        
+        private const string StateName = "BirdState";
+        public void FlapWings()
+        {
+            if (animator == null) return;
+            animator.SetInteger(StateName, 1);
+        }
+        public void Idol()
+        {
+            if (animator == null) return;
+            animator.SetInteger(StateName, 0);
+        }
+        public void Dead()
+        {
+            if (animator == null) return;
+            animator.SetInteger(StateName, 2);
+        }
+
+    }
+    private void SetUpAnimatorUtil()
+    {
+        AnimatorUtil.GetInst().SetUp(theAnimator);
+    }
+    #endregion
     #region audio-controller-class (and set-up method)
     /*
      * Use this to play Audio-clips
@@ -94,8 +133,9 @@ public class Bird : MonoBehaviour
     #endregion
 
     #region fields
+    private const string PipeTag = "Pipe";
     private const string FlapButtonName = "FlapButton";
-    private const string FlappingTriggerName = "Flapping";
+    //private const string FlappingTriggerName = "Flapping";
     private const int FlappingSoundIndex = 0;
     private const int DingSoundIndex = 1;
     private const int DeadSoundIndex = 2;
@@ -112,6 +152,8 @@ public class Bird : MonoBehaviour
     private AudioClip[] audioClips; // [flapping , ding , dead]
 
     private float cameraOffset = 0f;
+
+    private bool alive = true;
     #endregion
 
     #region Movement-helpers
@@ -133,13 +175,15 @@ public class Bird : MonoBehaviour
 
     private void Movement()
     {
+        if (!alive) return;
         var tmp = theRigidbody.velocity;
         tmp.x = horizontalSpeed;
         if (flappedWings)
         {
             flappedWings = false;
             tmp.y = boostSpeed;
-            theAnimator.SetBool(FlappingTriggerName, true);
+            // theAnimator.SetBool(FlappingTriggerName, true);
+            AnimatorUtil.GetInst().FlapWings();
             AudioController.GetInstance().PlayFlapping();
         }
         theRigidbody.velocity = tmp;
@@ -149,7 +193,20 @@ public class Bird : MonoBehaviour
     {
         flappedWings = true;
     }
-    private void RegisterFlap() { theAnimator.SetBool(FlappingTriggerName, false); }
+    private void RegisterFlap()
+    {
+        // theAnimator.SetBool(FlappingTriggerName, false);
+        if (alive) AnimatorUtil.GetInst().Idol();
+        else AnimatorUtil.GetInst().Dead();
+    }
+
+    private void Die()
+    {
+        alive = false;
+        AnimatorUtil.GetInst().Dead();
+        AudioController.GetInstance().PlayDead();
+
+    }
 
     private void MaintainCameraOffset()
     {
@@ -171,6 +228,7 @@ public class Bird : MonoBehaviour
 
         #endregion
         SetUpAudioController();
+        SetUpAnimatorUtil();
     }
 
     void Update()
@@ -185,6 +243,11 @@ public class Bird : MonoBehaviour
         const string gateTag = "PipeGate";
         if (collider.tag == gateTag) AudioController.GetInstance().PlayDing();
     }
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.tag == PipeTag) Die();
+    }
+
 
     
     
