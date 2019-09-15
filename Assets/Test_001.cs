@@ -134,10 +134,11 @@ public class Test_001 : MonoBehaviour
         //  btnMech(ref reset, ()=> { CloneMech.Reset(); });
         //btnMech(ref setPipesToTigger, SetPipHoldersToTrigger);
            MoveBird();
-        //RunTestingModeTest();
         // btnMech(ref setSortingOrders, SetSortingOrders);
-      //  EditorPlayingChecker.Update();
+        //  EditorPlayingChecker.Update();
+        TestKeyDevice();
     }
+    
 
     void SetPipHoldersToTrigger()
     {
@@ -205,70 +206,7 @@ public class Test_001 : MonoBehaviour
     }
     public bool setSortingOrders = false;
 
-#region Test TESTING_MODE
-    public bool testingMode = false;
-    public string disp = "";
-    private class TestUtil
-    {
-        private static bool isSetUp = false;
-        private static Action<string> setDisp = null;
-        private static Func<string> getDisp = null;
-        private static Func<bool> getBtn = null;
-        private static Action<bool> setBtn = null;
-        public static void SetUp(Func<string> gd, Action<string> sd, Func<bool> gb, Action<bool> sb)
-        {
-            getDisp = gd;  setDisp = sd; getBtn = gb; setBtn = sb;
-            isSetUp = true;
-        }
-        public static bool IsSetUp() { return isSetUp; }
 
-        private static string Clarify(string oldStr, string newMsg)
-        {
-            string start = "B | ";
-            if (oldStr == null || oldStr.Length == 0 || oldStr[0] != 'A') start = "A | ";
-            return start + newMsg;
-        }
-
-        private static string test()
-        {
-            #region conditionally define result-string
-#if TESTING_MODE
-            string result = "testing-mode defined";
-#else
-            string result = "tesing-mode NOT defined";
-#endif
-            #endregion
-            return result;
-        }
-
-        public static void RunTest()
-        {
-            if (getBtn())
-            {
-                setBtn(false);
-                string res = test();
-                res = Clarify( getDisp() , res );
-                setDisp(res);
-            }
-        }
-    }
-    private void _setupTestUtil()
-    {
-        if (TestUtil.IsSetUp()) return;
-        TestUtil.SetUp
-            (
-                () => disp,
-                s => { disp = s; },
-                () => testingMode ,
-                b => { testingMode = b; }
-            );
-    }
-    private void RunTestingModeTest()
-    {
-        _setupTestUtil();
-        TestUtil.RunTest();
-    }
-    #endregion
 
     class EditorPlayingChecker
     {
@@ -292,5 +230,66 @@ public class Test_001 : MonoBehaviour
         }
        
     }
+
+    private class KeyDevice
+    {
+        private Func<string> getter = null;
+        private int oldLen = 0;
+        private Dictionary<char, Action> Functions = null;
+        private KeyDevice() { }
+        private KeyDevice(Func<string> g, Dictionary<char, Action> fs)
+        {
+            getter = g;
+            Functions = fs;
+            oldLen = getter().Length;
+        }
+        public class Builder
+        {
+            private Func<string> getter = null;
+            private Dictionary<char, Action> Functions = new Dictionary<char, Action>();
+            public Builder SetGetter(Func<string> g) { getter = g; return this; }
+            public Builder AddKeyFunction(char k, Action f) { Functions.Add(k,f); return this; }
+            public KeyDevice Build() { return new KeyDevice(getter,Functions); }
+        }
+        public static Builder CreateBuilder() { return new Builder(); }
+
+        public void Update()
+        {
+            string cur = getter();
+            int curlen = cur.Length;
+            if (curlen == oldLen + 1)
+            {
+                char k = cur[oldLen];
+                bool found = Functions.TryGetValue(k,out Action action);
+                if (found) action();
+            }
+            oldLen = curlen;
+        }
+    }
+    public string keyLogger = "";
+    private KeyDevice keyDevice = null;
+    private KeyDevice GetKeyDevice()
+    {
+        if (keyDevice == null)
+        {
+            Action MakeAction(string msg)
+            {
+                void f() { Debug.Log(msg); }
+                return f;
+            }
+            keyDevice = KeyDevice.CreateBuilder()
+                .SetGetter(() => keyLogger)
+                .AddKeyFunction('j',MakeAction("pressed-j"))
+                .AddKeyFunction('k',MakeAction("pressed-k"))
+                .Build();
+        }
+        return keyDevice;
+    }
+    private void TestKeyDevice()
+    {
+        GetKeyDevice().Update();
+    }
+
+    
 }
 
