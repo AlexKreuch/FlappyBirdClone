@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿#define TESTING_MODE
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,9 +28,7 @@ public class Bird : MonoBehaviour
      * **/
     private class AnimatorUtil
     {
-
-  
-
+        
         private static AnimatorUtil instance = new AnimatorUtil();
         public static AnimatorUtil GetInst() { return instance; }
 
@@ -54,6 +53,11 @@ public class Bird : MonoBehaviour
             animator.SetInteger(StateName, 2);
         }
 
+        #region testing-code
+#if TESTING_MODE
+        public Animator GetAnimator() { return animator; }
+#endif
+        #endregion
     }
     private void SetUpAnimatorUtil()
     {
@@ -248,8 +252,20 @@ public class Bird : MonoBehaviour
         if (collision.collider.tag == PipeTag) Die();
     }
 
+    #region Testing Code
+#if TESTING_MODE
+    public void Testing_REVIVE()
+    {
+        alive = true;
+        AnimatorUtil.GetInst().Idol();
+    }
+    public Animator Testing_GetSavedAnimator()
+    {
+        return AnimatorUtil.GetInst().GetAnimator();
+    }
+#endif
+#endregion
 
-    
-    
-    
+
+
 }
