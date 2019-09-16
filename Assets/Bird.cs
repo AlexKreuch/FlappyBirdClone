@@ -130,6 +130,7 @@ public class Bird : MonoBehaviour
             private const string PipeTag = "Pipe";
             private const string GateTag = "PipeGate";
             private const string FlapButtonTag = "FlapButton";
+            private const string GroundTag = "Ground";
         #endregion
 
         #region Serialized-Fields
@@ -268,7 +269,7 @@ public class Bird : MonoBehaviour
     }
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.collider.tag == PipeTag) Die();
+        if (alive && (collision.collider.tag == PipeTag || collision.collider.tag == GroundTag)) Die();
     }
 
     #region Testing Code

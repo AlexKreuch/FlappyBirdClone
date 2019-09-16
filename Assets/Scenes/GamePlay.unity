@@ -4448,6 +4448,10 @@ PrefabInstance:
       propertyPath: useImprovedSound
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1705913157, guid: 5273032a07cf6c74e9f4ac883d65cc6e, type: 3}
+      propertyPath: Invincible
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1705913159, guid: 5273032a07cf6c74e9f4ac883d65cc6e, type: 3}
       propertyPath: m_Volume
       value: 1
@@ -4456,6 +4460,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SortingOrder
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 163623496810342185, guid: 5273032a07cf6c74e9f4ac883d65cc6e,
+        type: 3}
+      propertyPath: m_FlipX
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5273032a07cf6c74e9f4ac883d65cc6e, type: 3}
