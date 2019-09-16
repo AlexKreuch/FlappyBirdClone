@@ -14,7 +14,6 @@ public class Bird : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            cameraOffset = Camera.main.transform.position.x - this.transform.position.x;
         }
         else
             Destroy(this);
@@ -148,7 +147,7 @@ public class Bird : MonoBehaviour
 
         #region state-fields
             private float cameraOffset = 0f;
-            private bool flappedWings = false;
+            private bool shouldFlapWings = false;
             private bool alive = true;
         #endregion
 
@@ -176,9 +175,9 @@ public class Bird : MonoBehaviour
             if (!alive) return;
             var tmp = theRigidbody.velocity;
             tmp.x = horizontalSpeed;
-            if (flappedWings)
+            if (shouldFlapWings)
             {
-                flappedWings = false;
+                shouldFlapWings = false;
                 tmp.y = boostSpeed;
                 //theAnimator.SetBool(FlappingTriggerName, true);
                 AnimatorUtil.GetInst().FlapWings();
@@ -189,7 +188,7 @@ public class Bird : MonoBehaviour
         }
         public void Flap()
         {
-            flappedWings = true;
+            shouldFlapWings = true;
         }
         private void RegisterFlap()
         {
@@ -206,6 +205,10 @@ public class Bird : MonoBehaviour
         
         }
 
+        private void ComputeCameraOffset()
+        {
+            cameraOffset = Camera.main.transform.position.x - this.transform.position.x;
+        }
         private void MaintainCameraOffset()
         {
             Vector3 tmp = Camera.main.transform.position;
@@ -227,6 +230,7 @@ public class Bird : MonoBehaviour
         #endregion
         SetUpAudioController();
         SetUpAnimatorUtil();
+        ComputeCameraOffset();
     }
 
     void Update()
