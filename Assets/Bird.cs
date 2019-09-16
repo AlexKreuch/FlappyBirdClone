@@ -230,9 +230,9 @@ public class Bird : MonoBehaviour
         }
 
         private void ComputeCameraOffset()
-        {
-            cameraOffset = Camera.main.transform.position.x - this.transform.position.x;
-        }
+            {
+                cameraOffset = Camera.main.transform.position.x - this.transform.position.x;
+            }
         private void MaintainCameraOffset()
         {
             Vector3 tmp = Camera.main.transform.position;
@@ -246,11 +246,11 @@ public class Bird : MonoBehaviour
     void Awake()
     {
         MakeInstance();
-        #region setup flap-button
+#region setup flap-button
         GameObject.FindGameObjectWithTag(FlapButtonTag)
             .GetComponent<Button>()
             .onClick.AddListener(RequestFlap);
-        #endregion
+#endregion
         SetUpAudioController();
         SetUpAnimatorUtil();
         ComputeCameraOffset();
@@ -272,7 +272,7 @@ public class Bird : MonoBehaviour
         if (alive && (collision.collider.tag == PipeTag || collision.collider.tag == GroundTag)) Die();
     }
 
-    #region Testing Code
+#region Testing Code
 #if TESTING_MODE
     public void Testing_REVIVE()
     {
@@ -286,8 +286,9 @@ public class Bird : MonoBehaviour
     }
     public Rigidbody2D Testing_GetRigidbody() { return theRigidbody; }
     public bool Invincible = true;
+    
 #endif
-    #endregion
+#endregion
 
     
 
