@@ -149,6 +149,7 @@ public class Bird : MonoBehaviour
             private float cameraOffset = 0f;
             private bool shouldFlapWings = false;
             private bool alive = true;
+            private int score = 0;
         #endregion
 
     #endregion
@@ -223,6 +224,7 @@ public class Bird : MonoBehaviour
         }
         private void ScorePoint()
         {
+            score++;
             AudioController.GetInstance().PlayDing();
         }
 
@@ -286,6 +288,6 @@ public class Bird : MonoBehaviour
 #endif
     #endregion
 
-
+    
 
 }
