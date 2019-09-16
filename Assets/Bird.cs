@@ -129,7 +129,7 @@ public class Bird : MonoBehaviour
         #region constant values
             private const string PipeTag = "Pipe";
             private const string GateTag = "PipeGate";
-            private const string FlapButtonName = "FlapButton";
+            private const string FlapButtonTag = "FlapButton";
         #endregion
 
         #region Serialized-Fields
@@ -153,7 +153,7 @@ public class Bird : MonoBehaviour
 
     #endregion
 
-    #region Movement-helpers
+    #region Helper-Methods
 
 
         /* Tilt the Bird according to its vertical movement.
@@ -211,10 +211,19 @@ public class Bird : MonoBehaviour
 
         private void Die()
         {
+            #region testing code
+                #if TESTING_MODE
+                    if (Invincible) return;
+                #endif
+            #endregion
             alive = false;
             AnimatorUtil.GetInst().Dead();
             AudioController.GetInstance().PlayDead();
             theRigidbody.constraints = RigidbodyConstraints2D.None;
+        }
+        private void ScorePoint()
+        {
+            AudioController.GetInstance().PlayDing();
         }
 
         private void ComputeCameraOffset()
@@ -235,10 +244,9 @@ public class Bird : MonoBehaviour
     {
         MakeInstance();
         #region setup flap-button
-        GameObject.FindGameObjectWithTag(FlapButtonName)
+        GameObject.FindGameObjectWithTag(FlapButtonTag)
             .GetComponent<Button>()
             .onClick.AddListener(RequestFlap);
-
         #endregion
         SetUpAudioController();
         SetUpAnimatorUtil();
@@ -254,8 +262,7 @@ public class Bird : MonoBehaviour
   
     void OnTriggerEnter2D(Collider2D collider)
     {
-        
-        if (collider.tag == GateTag) AudioController.GetInstance().PlayDing();
+        if (collider.tag == GateTag) ScorePoint();
     }
     void OnCollisionEnter2D(Collision2D collision)
     {
@@ -275,8 +282,9 @@ public class Bird : MonoBehaviour
         return AnimatorUtil.GetInst().GetAnimator();
     }
     public Rigidbody2D Testing_GetRigidbody() { return theRigidbody; }
+    public bool Invincible = true;
 #endif
-#endregion
+    #endregion
 
 
 
