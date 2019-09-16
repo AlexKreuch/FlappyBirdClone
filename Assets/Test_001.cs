@@ -137,6 +137,7 @@ public class Test_001 : MonoBehaviour
         // btnMech(ref setSortingOrders, SetSortingOrders);
         //  EditorPlayingChecker.Update();
         TestKeyDevice();
+        AccessorTest();
     }
     
 
@@ -231,6 +232,7 @@ public class Test_001 : MonoBehaviour
        
     }
 
+    #region KeyDevice
     private class KeyDevice
     {
         private Func<string> getter = null;
@@ -289,6 +291,89 @@ public class Test_001 : MonoBehaviour
     {
         GetKeyDevice().Update();
     }
+    #endregion
+
+
+    #region test
+    public bool testconstraints = false;
+    public string disp = "";
+    private struct Accessor
+    {
+        private static object box = null;
+        private Func<string> strGetter;
+        private Action<string> strSetter;
+        private Func<bool> boolGetter;
+        private Action<bool> boolSetter;
+        
+        public string strVal { get { return strGetter(); } set { strSetter(value); } }
+        public bool boolVal { get { return boolGetter(); } set { boolSetter(value); } }
+
+        public Accessor(Func<string> sg, Action<string> ss, Func<bool> bg, Action<bool> bs)
+        {
+            strGetter = sg;
+            strSetter = ss;
+            boolGetter = bg;
+            boolSetter = bs;
+
+        }
+
+        public static void SetUpInstance(Func<string> sg, Action<string> ss, Func<bool> bg, Action<bool> bs)
+        {
+            box = new Accessor(sg,ss,bg,bs);
+        }
+        public static bool InstanceIsSetUp() { return box != null; }
+        public static Accessor GetInstance()
+        {
+            if (box == null)
+            {
+                return new Accessor(() => "", v => { }, () => false, v => { });
+            }
+            else
+            {
+                return ((Accessor)box);
+            }
+        }
+    }
+    private Accessor GetAccessor()
+    {
+        if (!Accessor.InstanceIsSetUp())
+            Accessor.SetUpInstance
+                (
+                    ()=>disp,
+                    v => { disp = v; },
+                    ()=>testconstraints,
+                    v => { testconstraints = v; }
+                );
+        return Accessor.GetInstance();
+    }
+    private void TestRunner( Accessor accessor, Func<string> test )
+    {
+        
+        if (accessor.boolVal)
+        {
+            accessor.boolVal = false;
+            string start = (accessor.strVal == null || accessor.strVal.Length == 0 || accessor.strVal[0] != 'A') ? "A | " : "B | ";
+            accessor.strVal = start + test();
+        }
+    }
+    private string _AccessorTest()
+    {
+        if (!EditorApplication.isPlaying) { return "need to be in play-mode"; }
+        #region conditionally define RigidBody2D object rb2d
+#if BIRDIN_TESTIN_MODE
+        Rigidbody2D rb2d = Bird.instance.Testing_GetRigidbody();
+#else
+        Rigidbody2D rb2d = null;
+#endif
+        #endregion
+        if (rb2d == null) return "rb not-found";
+        return rb2d.constraints.ToString();
+    }
+    private void AccessorTest()
+    {
+        TestRunner( GetAccessor() , _AccessorTest );
+    }
+    #endregion
 
     
 }
