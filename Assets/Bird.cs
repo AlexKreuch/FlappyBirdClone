@@ -33,7 +33,11 @@ public class Bird : MonoBehaviour
             private Animator animator = null;
             public void SetUp(Animator anim) { animator = anim; }
 
-        
+            /* Set the int-parameter 'BirdState' of the animator to : 
+             *    -> 0, for the Idol-animation
+             *    -> 1, for the Flapping-animation
+             *    -> 2, for the Dead-animation
+             * **/
             private const string StateName = "BirdState";
             public void FlapWings()
             {
@@ -58,9 +62,9 @@ public class Bird : MonoBehaviour
             #endregion
         }
         private void SetUpAnimatorUtil()
-    {
-        AnimatorUtil.GetInst().SetUp(theAnimator);
-    }
+        {
+            AnimatorUtil.GetInst().SetUp(theAnimator);
+        }
     #endregion
     #region audio-controller-class (and set-up method)
         /*
@@ -101,48 +105,32 @@ public class Bird : MonoBehaviour
                 clips = clipArr;
             }
 
-            private void PlaySoundV0(int index)
-            {
-                if (!isSetUp) return;
-                audioSource.clip = clips[index];
-                audioSource.Play();
-            }
-            private void PlaySoundV1(int index)
+            private void PlaySound(int index)
             {
                 if (!isSetUp) return;
                 audioSource.PlayOneShot(clips[index]);
             }
+
+        
             public void PlayFlapping() { PlaySound(FlappingSoundIndex); }
             public void PlayDing() { PlaySound(DingSoundIndex); }
             public void PlayDead() { PlaySound(DeadSoundIndex); }
 
-            private System.Func<bool> accessFlag = null;
-            private void PlaySound(int index)
-            {
-                bool flg = accessFlag == null ? false : accessFlag();
-                if (flg) PlaySoundV1(index);
-                else PlaySoundV0(index);
-            }
-            public void SetFlagAccess(System.Func<bool> acc) { accessFlag = acc; }
+           
 
         }
         private void SetUpAudioController()
         {
             AudioController.GetInstance().SetUp(audioSource, audioClips);
-            AudioController.GetInstance().SetFlagAccess( ()=>useImprovedSound );
         }
-        public bool useImprovedSound = false;
     #endregion
 
     #region fields
 
         #region constant values
-        private const string PipeTag = "Pipe";
+            private const string PipeTag = "Pipe";
+            private const string GateTag = "PipeGate";
             private const string FlapButtonName = "FlapButton";
-            //private const string FlappingTriggerName = "Flapping";
-            private const int FlappingSoundIndex = 0;
-            private const int DingSoundIndex = 1;
-            private const int DeadSoundIndex = 2;
         #endregion
 
         #region Serialized-Fields
@@ -250,8 +238,8 @@ public class Bird : MonoBehaviour
   
     void OnTriggerEnter2D(Collider2D collider)
     {
-        const string gateTag = "PipeGate";
-        if (collider.tag == gateTag) AudioController.GetInstance().PlayDing();
+        
+        if (collider.tag == GateTag) AudioController.GetInstance().PlayDing();
     }
     void OnCollisionEnter2D(Collision2D collision)
     {

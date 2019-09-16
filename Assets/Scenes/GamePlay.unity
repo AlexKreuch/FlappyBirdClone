@@ -1337,7 +1337,7 @@ MonoBehaviour:
   setSortingOrders: 0
   keyLogger: jkkkkklllkkjjjjkkjk
   testconstraints: 0
-  disp: B | asdf
+  disp: B | need to be in play-mode
 --- !u!224 &592761007
 RectTransform:
   m_ObjectHideFlags: 0
