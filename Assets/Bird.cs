@@ -170,6 +170,10 @@ public class Bird : MonoBehaviour
             gameObject.transform.rotation = Quaternion.Euler(rotation);
         }
 
+        /* Move the Bird
+         * 
+         * 
+         * **/
         private void Movement()
         {
             if (!alive) return;
@@ -186,10 +190,18 @@ public class Bird : MonoBehaviour
             theRigidbody.velocity = tmp;
             MaintainRotation();
         }
-        public void Flap()
+        /* Called by the Flap-Button to indicate that the bird should flap its wings on the next update
+         * 
+         * 
+         * **/
+        public void RequestFlap()
         {
             shouldFlapWings = true;
         }
+        /* Called by the animator to indicate that the bird has just started flapping its wings
+         * 
+         * 
+         * **/
         private void RegisterFlap()
         {
             // theAnimator.SetBool(FlappingTriggerName, false);
@@ -202,7 +214,7 @@ public class Bird : MonoBehaviour
             alive = false;
             AnimatorUtil.GetInst().Dead();
             AudioController.GetInstance().PlayDead();
-        
+            theRigidbody.constraints = RigidbodyConstraints2D.None;
         }
 
         private void ComputeCameraOffset()
@@ -225,7 +237,7 @@ public class Bird : MonoBehaviour
         #region setup flap-button
         GameObject.FindGameObjectWithTag(FlapButtonName)
             .GetComponent<Button>()
-            .onClick.AddListener(Flap);
+            .onClick.AddListener(RequestFlap);
 
         #endregion
         SetUpAudioController();
@@ -256,6 +268,7 @@ public class Bird : MonoBehaviour
     {
         alive = true;
         AnimatorUtil.GetInst().Idol();
+        theRigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
     }
     public Animator Testing_GetSavedAnimator()
     {
