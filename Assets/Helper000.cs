@@ -56,7 +56,7 @@ public class Helper000 : MonoBehaviour
     
     
 
-    public class BGbox
+    private class BGbox
     {
         private RectTransform rect0 = null;
         private RectTransform rect1 = null;
@@ -113,7 +113,17 @@ public class Helper000 : MonoBehaviour
     }
 
 
-    
+    private RectTransform rect = null;
+    private RectTransform GetRect()
+    {
+        if (rect == null)
+        {
+            const string name = "Ground";
+            var ims = GameObject.FindObjectsOfType<Image>();
+            foreach (var x in ims) if (x.name == name) { rect = x.rectTransform; break; }
+        }
+        return rect;
+    }
     
 
     // Update is called once per frame
