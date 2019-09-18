@@ -53,83 +53,116 @@ public class Helper000 : MonoBehaviour
         public static ReportBuilder CreateBuilder() { return new ReportBuilder(); }
 
     }
-    
-    
 
-    private class BGbox
+    private class ScalerClass
     {
-        private RectTransform rect0 = null;
-        private RectTransform rect1 = null;
-
-        public BGbox(Image image0, Image image1)
+        private static RectTransform[] rects = null;
+        private static float tracker = 1f;
+        private static RectTransform[] GetRects()
         {
-            var rs = new RectTransform[] { image0.rectTransform , image1.rectTransform };
-            int off = rs[0].localPosition.x < rs[1].localPosition.x ? 0 : 1;
-            rect0 = rs[(0 + off) % 2];
-            rect1 = rs[(1 + off) % 2];
+            if (rects == null)
+            {
+                var ims = GameObject.FindObjectsOfType<Image>();
+                rects = new RectTransform[ims.Length];
+                int c = 0;
+                foreach (var im in ims) rects[c++] = im.rectTransform;
+
+            }
+            return rects;
         }
-
-        public Vector2 Pos
+        public static void Update(float size, Action<float> setter = null)
         {
-            get
+            if (size == 0) size = .000001f;
+            if (size == tracker) return;
+            float factor = size / tracker;
+            var list = GetRects();
+            foreach (var r in list)
             {
-                var v0 = rect0.localPosition;
-                var v1 = rect1.localPosition;
-                var v = (v0 + v1) / 2;
-                return new Vector2(v.x,v.y);
+                r.localScale *= factor;
+                r.localPosition *= factor;
             }
-            set
-            {
-                var cur = (rect0.localPosition + rect1.localPosition) / 2;
-                var nxt = new Vector3(value.x,value.y,0);
-                var dif = nxt - cur;
-                dif.z = 0;
-                rect0.localPosition += dif;
-                rect1.localPosition += dif;
-            }
+            tracker = size;
+            if (setter != null) setter(size);
         }
-
-        public Vector2 Size
+        public static void RESET()
         {
-            get
+            var list = GetRects();
+            Vector3 scale = new Vector3(1f, 1f, 1f);
+            foreach (var r in list)
             {
-                var x = 2 * rect0.sizeDelta.x;
-                var y = rect0.sizeDelta.y;
-                return new Vector2(x,y);
+                
+                float xscale = r.localScale.x;
+                if (xscale == 0f) xscale = .00001f;
+                
+                r.localScale = scale;
+                r.localPosition /= xscale;
             }
-            set
-            {
-                var curDist = rect1.localPosition.x - rect0.localPosition.x;
-                var newDist = value.x / 2;
-                var delDist = (newDist - curDist) / 2;
-                var deltaPos = new Vector3(delDist,0f,0f);
-                var newSize = new Vector2(value.x/2,value.y);
-                rect1.localPosition += deltaPos;
-                rect0.localPosition -= deltaPos;
-                rect0.sizeDelta = newSize;
-                rect1.sizeDelta = newSize;
-            }
+            tracker = 1f;
         }
     }
 
-
-    private RectTransform rect = null;
-    private RectTransform GetRect()
+    private class ShifterClass
     {
-        if (rect == null)
+        private Func<Image, bool> filter = null;
+        private RectTransform[] rects = null;
+        public ShifterClass(Func<Image, bool> f) { filter = f; }
+        private Vector2 tracker = new Vector2();
+        private RectTransform[] GetRects()
         {
-            const string name = "Ground";
-            var ims = GameObject.FindObjectsOfType<Image>();
-            foreach (var x in ims) if (x.name == name) { rect = x.rectTransform; break; }
+            if (rects == null)
+            {
+                Func<Image, bool> fil = filter != null ? filter : (v => true);
+                List<RectTransform> list = new List<RectTransform>();
+                var ims = GameObject.FindObjectsOfType<Image>();
+                foreach (var im in ims)
+                {
+                    if (fil(im)) list.Add(im.rectTransform);
+                }
+                rects = list.ToArray();
+            }
+            return rects;
         }
-        return rect;
-    }
-    
 
+        public void Update(Vector2 pos)
+        {
+            if (pos == tracker) return;
+            var delta_v2 = pos - tracker;
+            var delta = new Vector3(delta_v2.x,delta_v2.y,0f);
+            var list = GetRects();
+            foreach (var r in list) r.localPosition += delta;
+            tracker = pos;
+        }
+
+    }
+
+    private ShifterClass groundShifter = new ShifterClass(v=> (v.name.Length>0&&v.name[0]=='G'));
+    private ShifterClass backgroundShifter = new ShifterClass(v => (v.name.Length > 0 && v.name[0] == 'B'));
+
+    public float scaler = 1f;
+    public Vector2 BG = new Vector2();
+    public Vector2 GR = new Vector2();
     // Update is called once per frame
     void Update()
     {
-        
-      
+        ScalerClass.Update(scaler, v=> { scaler = v; });
+        groundShifter.Update(GR);
+        backgroundShifter.Update(BG);
+        BtnMech(ref btn, press_btn);
+    }
+
+    public enum FUN { RESET_SCALES }
+    public FUN btnFunc = FUN.RESET_SCALES;
+    public bool btn = false;
+    private void press_btn()
+    {
+        switch (btnFunc)
+        {
+            case FUN.RESET_SCALES:ResetScales(); break;
+        }
+    }
+    private void ResetScales()
+    {
+        scaler = 1f;
+        ScalerClass.RESET();
     }
 }
