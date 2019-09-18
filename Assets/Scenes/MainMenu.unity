@@ -761,7 +761,7 @@ GameObject:
   - component: {fileID: 1001879033}
   - component: {fileID: 1001879032}
   m_Layer: 0
-  m_Name: Button
+  m_Name: ShareButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
