@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 124160808247626971}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.92, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -158,7 +158,7 @@ MonoBehaviour:
   boostSpeed: 5
   theRigidbody: {fileID: 124160808247626968}
   theAnimator: {fileID: 124160808247626975}
-  audioSource: {fileID: 0}
+  audioSource: {fileID: 574402318637585271}
   audioClips:
   - {fileID: 8300000, guid: cdc4490f6a8de404087ef560ede54375, type: 3}
   - {fileID: 8300000, guid: 1296ba1816163284fa1960b1c95bae81, type: 3}
