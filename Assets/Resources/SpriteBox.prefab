@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2323043731720960704
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2323043731720960718}
+  - component: {fileID: 2323043731720960705}
+  m_Layer: 0
+  m_Name: SpriteBox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2323043731720960718
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2323043731720960704}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 9, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2323043731720960705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2323043731720960704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2f15484c53151045b74b6b4e97b254b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BirdSprites:
+  - {fileID: 8086759415696751258, guid: 7800e78ba23447d4db555eab9a9cdfa6, type: 3}
+  - {fileID: 2620869238676920202, guid: 7800e78ba23447d4db555eab9a9cdfa6, type: 3}
+  - {fileID: -7061306546577896900, guid: 7800e78ba23447d4db555eab9a9cdfa6, type: 3}
+  - {fileID: -6085256750761246206, guid: 7800e78ba23447d4db555eab9a9cdfa6, type: 3}
+  - {fileID: 6682953076437761832, guid: 7800e78ba23447d4db555eab9a9cdfa6, type: 3}
+  - {fileID: -1973010637530243110, guid: 7800e78ba23447d4db555eab9a9cdfa6, type: 3}
+  - {fileID: -4553429777446589873, guid: 7800e78ba23447d4db555eab9a9cdfa6, type: 3}
+  - {fileID: -5561052633007440660, guid: 7800e78ba23447d4db555eab9a9cdfa6, type: 3}
+  - {fileID: 893832587123603584, guid: 7800e78ba23447d4db555eab9a9cdfa6, type: 3}
+  - {fileID: -7012614467759242416, guid: 7800e78ba23447d4db555eab9a9cdfa6, type: 3}
+  - {fileID: 2479076729512883859, guid: 7800e78ba23447d4db555eab9a9cdfa6, type: 3}
+  - {fileID: 2432741378779332653, guid: 7800e78ba23447d4db555eab9a9cdfa6, type: 3}

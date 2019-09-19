@@ -639,6 +639,7 @@ GameObject:
   - component: {fileID: 951589200}
   - component: {fileID: 951589199}
   - component: {fileID: 951589198}
+  - component: {fileID: 951589201}
   m_Layer: 5
   m_Name: BirdButton
   m_TagString: Untagged
@@ -748,6 +749,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 951589196}
   m_CullTransparentMesh: 0
+--- !u!114 &951589201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 951589196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f53eb89572c7e0549b9ca721a62f9d5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1001879030
 GameObject:
   m_ObjectHideFlags: 0
@@ -970,16 +983,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1373285615}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb526c30808fd7a4e8bc68832500be25, type: 3}
+  m_Script: {fileID: 11500000, guid: e7d83a017f99c464ea7aa55be1b8e63c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scaler: 0.015
-  BG: {x: 0, y: 0}
-  GR: {x: 0, y: -6.62}
-  btnFunc: 0
-  btn: 0
+  test: 0
 --- !u!4 &1373285617
 Transform:
   m_ObjectHideFlags: 0
