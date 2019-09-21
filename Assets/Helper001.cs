@@ -43,11 +43,20 @@ public class Helper001 : MonoBehaviour
         }
     }
 
-    
- 
+    public bool BLUE = false, GREEN = false, RED = false;
+    private void maintain()
+    {
+        if (!Application.isPlaying) return;
+        var tmp = BirdPicker.Option.NONE;
+        if (BLUE) tmp = tmp | BirdPicker.Option.BLUE;
+        if (GREEN) tmp = tmp | BirdPicker.Option.GREEN;
+        if (RED) tmp = tmp | BirdPicker.Option.RED;
+        BirdPicker.instance.UnlockedOptions = tmp;
+    }
+
     // Update is called once per frame
     void Update()
     {
-       
+        maintain();
     }
 }
