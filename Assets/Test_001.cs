@@ -176,15 +176,16 @@ public class Test_001 : MonoBehaviour
             }
 
             public ScaleAcc(Text txt) { rect = txt.gameObject.GetComponent<RectTransform>(); }
+            public ScaleAcc(RectTransform rct) { rect = rct; }
         }
         private static void MaintainTextScales()
         {
             var pan = GetPausePanel.Get();
-            var texts = pan.GetComponentsInChildren<Text>();
+            var rects = pan.GetComponentsInChildren<RectTransform>();
             
-            foreach (var txt in texts)
+            foreach (var r in rects)
             {
-                var scaleAcc = new ScaleAcc(txt);
+                var scaleAcc = new ScaleAcc(r);
                 var tmp = scaleAcc.Scale;
                 tmp.y = tmp.x;
                 scaleAcc.Scale = tmp;
