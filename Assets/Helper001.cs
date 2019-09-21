@@ -44,40 +44,10 @@ public class Helper001 : MonoBehaviour
     }
 
     
-    private class GetTextRect
-    {
-        private const string nm = "Title";
-        private static RectTransform rect = null;
-        private static Text FindText()
-        {
-            var lst = GameObject.FindObjectsOfType<Text>();
-            foreach (var x in lst) if (x.name == nm) return x;
-            return null;
-        }
-        public static RectTransform Get()
-        {
-            if (rect == null)
-            {
-                var txt = FindText();
-                if (txt != null) rect = txt.rectTransform;
-            }
-            return rect;
-        }
-    }
-    private void MaintainScale()
-    {
-        var rect = GetTextRect.Get();
-        if (rect == null) return;
-        var tmp = rect.localScale;
-        if (tmp.x != tmp.y)
-        {
-            tmp.y = tmp.x;
-            rect.localScale = tmp;
-        }
-    }
+ 
     // Update is called once per frame
     void Update()
     {
-        MaintainScale();
+       
     }
 }

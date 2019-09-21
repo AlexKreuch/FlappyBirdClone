@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System;
+using UnityEngine.UI;
 
 [ExecuteAlways]
 public class Test_001 : MonoBehaviour
@@ -126,10 +127,80 @@ public class Test_001 : MonoBehaviour
     }
     public bool clone = false;
     public bool reset = false;
-    
+
+    private class TextMaintainer
+    {
+        private class GetPausePanel
+        {
+            private const string panelName = "PausePanel";
+            private static GameObject panel = null;
+            public static GameObject Get()
+            {
+                if (panel == null)
+                {
+                    var objs = FindObjectsOfType<GameObject>();
+                    foreach (var x in objs) if (x.name == panelName)
+                        {
+                            panel = x;
+                            break;
+                        }
+                }
+                return panel;
+            }
+        }
+        private struct ScaleAcc
+        {
+            private RectTransform rect;
+
+            private static Vector2 FromV3(Vector3 v3)
+            {
+                return new Vector2(v3.x, v3.y);
+            }
+            private static Vector3 _ToV3(Vector2 v2, float z)
+            {
+                return new Vector3(v2.x,v2.y,z);
+            }
+            private static Vector3 ToV3(Vector2 v2, Vector3 v3)
+            {
+                return _ToV3(v2,v3.z);
+            }
+            private static Vector3 ToV3(Vector2 v2)
+            {
+                return _ToV3(v2,0f);
+            }
+
+            public Vector2 Scale
+            {
+                get { return FromV3(rect.localScale); }
+                set { rect.localScale = ToV3(value, rect.localScale); }
+            }
+
+            public ScaleAcc(Text txt) { rect = txt.gameObject.GetComponent<RectTransform>(); }
+        }
+        private static void MaintainTextScales()
+        {
+            var pan = GetPausePanel.Get();
+            var texts = pan.GetComponentsInChildren<Text>();
+            
+            foreach (var txt in texts)
+            {
+                var scaleAcc = new ScaleAcc(txt);
+                var tmp = scaleAcc.Scale;
+                tmp.y = tmp.x;
+                scaleAcc.Scale = tmp;
+            }
+        }
+        public static void Run()
+        {
+            MaintainTextScales();
+        }
+    }
+
+
 
     void Update()
     {
+        TextMaintainer.Run();
         //    btnMech(ref clone, ()=> { CloneMech.Clone(theObject, space); });
         //  btnMech(ref reset, ()=> { CloneMech.Reset(); });
         //btnMech(ref setPipesToTigger, SetPipHoldersToTrigger);
