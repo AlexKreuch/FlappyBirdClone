@@ -33,7 +33,22 @@ public class BirdPicker : MonoBehaviour
             case 0: return Option.BLUE;
             case 1: return Option.GREEN;
             case 2: return Option.RED;
-            default: return Option.NONE;
+            default: return Option.NONE; // appease compiler
+        }
+    }
+    public void SetChoice(Option option)
+    {
+        /**
+            Note : If the given option is not pure (e.g. BLUE|GREEN) or if the given option is not available,  
+            then return without changing currentChoice. 
+         */
+        if ((option & _unlockedOptions) == Option.NONE) return; // check unlocked 
+        switch (option)
+        {
+            case Option.NONE: currentChoice = -1; break;
+            case Option.BLUE: currentChoice = 0; break;
+            case Option.GREEN: currentChoice = 1; break;
+            case Option.RED: currentChoice = 2; break;
         }
     }
 
