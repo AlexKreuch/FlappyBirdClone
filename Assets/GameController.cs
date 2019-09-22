@@ -70,5 +70,14 @@ public class GameController : MonoBehaviour
     {
         MakeInstance();
     }
+
+    public void GetUnlockedBirds(ref bool blue, ref bool red, ref bool green)
+    {
+        blue = BlueUnlocked;
+        red = RedUnlocked;
+        green = GreenUnlocked;
+    }
+
+   
 }
 
