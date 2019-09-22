@@ -19,37 +19,104 @@ public class BirdPicker : MonoBehaviour
     private Button theButton = null;
     private Sprite[] sprites = null;
 
-    public enum Option { NONE=0, BLUE=1, GREEN=2, RED=4 };
-    private Option _unlockedOptions = Option.NONE;
-    public Option UnlockedOptions { get { return _unlockedOptions; } set { _unlockedOptions = value; } }
+    private enum Option { NONE=0, BLUE=1, GREEN=2, RED=4 };
+    private Option unlockedOptions = Option.NONE;
+
+    private class ChoiceUtil
+    {
+        private static Option[] options = new Option[] { Option.NONE, Option.BLUE, Option.GREEN, Option.RED };
+        private static int[] ints = new int[] { -1, 0, 1, 2  };
+        private static char[] chars = new char[] { 'N', 'B', 'G', 'R' };
+
+        private static int ToIndex_opt(Option option)
+        {
+            switch (option)
+            {
+                case Option.NONE: return 0;
+                case Option.BLUE: return 1;
+                case Option.GREEN: return 2;
+                case Option.RED: return 3;
+                default:return 0;
+            }
+        }
+        private static int ToIndex_int(int val)
+        {
+            switch (val)
+            {
+                case -1: return 0;
+                case 0: return 1;
+                case 1: return 2;
+                case 2: return 3;
+                default: return 0;
+            }
+        }
+        private static int ToIndex_cha(char val)
+        {
+
+            switch (val)
+            {
+                case 'N': return 0;
+                case 'B': return 1;
+                case 'G': return 2;
+                case 'R': return 3;
+                default: return 0;
+            }
+        }
+
+        private static Option FromIndex_opt(int index) { return options[index]; }
+        private static int FromIndex_int(int index) { return ints[index]; }
+        private static char FromIndex_cha(int index) { return chars[index]; }
+
+        private static G Convert<T,G>(System.Func<T,int> _toind, System.Func<int,G> _fromind, T val)
+        {
+            return _fromind(_toind(val));
+        }
+
+        public static Option ItoO(int val) { return Convert<int, Option>(ToIndex_int, FromIndex_opt, val); }
+        public static Option CtoO(char val) { return Convert<char, Option>(ToIndex_cha, FromIndex_opt, val); }
+        public static int OtoI(Option val) { return Convert<Option, int>(ToIndex_opt, FromIndex_int, val); }
+        public static int CtoI(char val) { return Convert<char, int>(ToIndex_cha, FromIndex_int, val); }
+        public static char OtoC(Option val) { return Convert<Option, char>(ToIndex_opt, FromIndex_cha, val); }
+        public static char ItoC(int val) { return Convert<int, char>(ToIndex_int, FromIndex_cha, val); }
+
+        public static bool IsValid(Option val)
+        {
+            return val == Option.NONE || ToIndex_opt(val) != 0;
+        }
+        public static bool IsValid(int val)
+        {
+            return val == 0 || ToIndex_int(val) != 0;
+        }
+        public static bool IsValid(char val)
+        {
+            return val == 'N' || ToIndex_cha(val) != 0;
+        }
+
+    }
 
     private int currentChoice = -1; // 0:=Blue, 1:=Green, 2:=Red , -1:=No-choice
 
-    public Option GetChoice() 
+    public char GetChoice() // 'N':=No-choice, 'B':=Blue, 'G':=Green, 'R':=Red
     {
-        switch (currentChoice)
-        {
-            case -1: return Option.NONE;
-            case 0: return Option.BLUE;
-            case 1: return Option.GREEN;
-            case 2: return Option.RED;
-            default: return Option.NONE; // appease compiler
-        }
+        return ChoiceUtil.ItoC(currentChoice);
     }
-    public void SetChoice(Option option)
+    public void SetChoice(char optionChar)// 'N':=No-choice, 'B':=Blue, 'G':=Green, 'R':=Red
     {
         /**
-            Note : If the given option is not pure (e.g. BLUE|GREEN) or if the given option is not available,  
+            Note : If the given option is invalid, or if the given option is not available,  
             then return without changing currentChoice. 
          */
-        if ((option & _unlockedOptions) == Option.NONE) return; // check unlocked 
-        switch (option)
-        {
-            case Option.NONE: currentChoice = -1; break;
-            case Option.BLUE: currentChoice = 0; break;
-            case Option.GREEN: currentChoice = 1; break;
-            case Option.RED: currentChoice = 2; break;
-        }
+        if (!ChoiceUtil.IsValid(optionChar)) return; // check-valid
+        var option = ChoiceUtil.CtoO(optionChar);
+        if ((option & unlockedOptions) == Option.NONE) return; // check-unlocked 
+        currentChoice = ChoiceUtil.OtoI(option); // set currentChoice
+    }
+    public void SetUnlockedOption(char birdChar, bool unlock)
+    {
+        if (birdChar=='N' || !ChoiceUtil.IsValid(birdChar)) return;
+        Option opt = ChoiceUtil.CtoO(birdChar);
+        if (unlock) unlockedOptions = unlockedOptions | opt;
+        else unlockedOptions = unlockedOptions & (~opt);
     }
 
     /* Returns true if and only if 'choice' is a correct and available value for 'currentChoice'
@@ -58,18 +125,13 @@ public class BirdPicker : MonoBehaviour
      * **/
     private bool IsValidChoice(int choice)
     {
-        switch (choice)
-        {
-            case -1: return true;
-            case 0: return ((_unlockedOptions & Option.BLUE) != Option.NONE);
-            case 1: return ((_unlockedOptions & Option.GREEN) != Option.NONE);
-            case 2: return ((_unlockedOptions & Option.RED) != Option.NONE);
-            default: return false;
-        }
+        if (!ChoiceUtil.IsValid(choice)) return false;
+        var optionChoice = ChoiceUtil.ItoO(choice);
+        return ((optionChoice & unlockedOptions) == optionChoice);
     }
     private void RotateChoice()
     {
-        if (_unlockedOptions == Option.NONE) { currentChoice = -1; return; }
+        if (unlockedOptions == Option.NONE) { currentChoice = -1; return; }
         int tmp = currentChoice;
         do
         {
@@ -98,6 +160,10 @@ public class BirdPicker : MonoBehaviour
         const float tempo = .1f;
         int cur = 1;
         int[] cycle = new int[] { 0 , 1 , 2 , 1 };
+        ResetImage(cycle[cur]);
+        theImage.SetNativeSize();
+        yield return new WaitForSeconds(tempo);
+        cur = (cur + 1) % cycle.Length;
         while (true)
         {
             ResetImage(cycle[cur]);
