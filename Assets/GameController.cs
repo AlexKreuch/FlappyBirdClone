@@ -11,51 +11,16 @@ using System.Runtime.CompilerServices;
 
 public class GameController : MonoBehaviour
 {
-    #region conditianally defined Report-method
-#if TESTING_MODE
-    private void Report() { Debug.Log(""); }
-    private void Report(string msg, params object[] data)
-    {
-        Debug.Log(string.Format(msg,data));
-    }
-#else
-    private void Report(params object[] data)
-    {
-        Debug.Log("missed report-cleanup in GameController ; paramLen==" + data.Length);
-    }
-#endif
-#endregion
-#region define setup-struct for testing
-#if TESTING_MODE
-    private struct SetUpInfo
-    {
-        public bool red;
-        public bool green;
-        public bool blue;
-        public char brd;
-        public SetUpInfo(bool r, bool g, bool b, char br)
-        {
-            red = r;
-            green = g;
-            blue = b;
-            brd = br;
-        }
-    }
-    private SetUpInfo setUpInfo = new SetUpInfo(false,true,true,'G');
-#endif
-#endregion
+    
 
     public static GameController instance;
     private void MakeInstance()
     {
-        Report("GC-MakeInstance");
         if (instance != null)
         {
-            Report("GC-MakeInstace : destroy-redundant");
             Destroy(this); return;
         }
         instance = this;
-        Report("GC-MakeInstace : setting-up");
 #if TESTING_MODE
         InitialSetup();
 #else
@@ -77,7 +42,7 @@ public class GameController : MonoBehaviour
     private const int DEFAULTBIRDFLAG = BLUEFLAG;
 #endregion
 
-#region private-properties
+    #region private-properties
     private int HighScore
     {
         get
@@ -134,55 +99,39 @@ public class GameController : MonoBehaviour
             PlayerPrefs.SetInt(CURRENTBIRD,flag);
         }
     }
-#endregion
+    #endregion
 
-#region public-methods
+    #region public-methods
 
 
-#endregion
+    #endregion
 
-#region helper-methods
+    #region helper-methods
 
-#region conditionally define InitialSetup for testing
-#if TESTING_MODE
+   
     private void InitialSetup()
     {
-        Report("InitialSetUp");
-        Debug.Log("GameController-initial-setup");
-        PlayerPrefs.DeleteAll();
-        Initialized = true;
+        if (Initialized) PlayerPrefs.DeleteAll(); // reset if needed
+
         HighScore = 0;
-        BlueUnlocked = setUpInfo.blue;
-        RedUnlocked = setUpInfo.red;
-        GreenUnlocked = setUpInfo.green;
-        CurrentBird = setUpInfo.brd;
+
+        BlueUnlocked = true;
+        RedUnlocked = true;
+        GreenUnlocked = false;
+
+        CurrentBird = 'R';
+
+        Initialized = true;
     }
-#else
 
-    private void InitialSetup()
-        {
-            if (Initialized) PlayerPrefs.DeleteAll(); // reset if needed
 
-            HighScore = 0;
-
-            BlueUnlocked  = true;
-            RedUnlocked = true ;
-            GreenUnlocked = false;
-
-            CurrentBird = 'R';
-        
-            Initialized = true;
-        }
-
-#endif
-#endregion
     private bool _getBirdUnlocked(int birdFlag)
         {
             int tmp = PlayerPrefs.GetInt(UNLOCKEDBIRDS, 0);
             tmp = tmp & birdFlag;
             return tmp != 0;
         }
-        private void _setBirdUnlocked(bool val, int birdFlag)
+    private void _setBirdUnlocked(bool val, int birdFlag)
     {
         int tmp = PlayerPrefs.GetInt(UNLOCKEDBIRDS, 0);
         if (val) tmp = tmp | birdFlag;
@@ -190,13 +139,12 @@ public class GameController : MonoBehaviour
         PlayerPrefs.SetInt(UNLOCKEDBIRDS, tmp);
     }
    
-#endregion
+    #endregion
 
 
 
     void OnEnable()
     {
-        Report("GC-OnEnable");
         MakeInstance();
     }
 
