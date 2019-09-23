@@ -108,15 +108,19 @@ public class BirdPicker : MonoBehaviour
          */
         if (!ChoiceUtil.IsValid(optionChar)) return; // check-valid
         var option = ChoiceUtil.CtoO(optionChar);
-        if ((option & unlockedOptions) == Option.NONE) return; // check-unlocked 
+        if ((option & unlockedOptions) != option) return; // check-unlocked 
         currentChoice = ChoiceUtil.OtoI(option); // set currentChoice
     }
     public void SetUnlockedOption(char birdChar, bool unlock)
     {
-        if (birdChar=='N' || !ChoiceUtil.IsValid(birdChar)) return;
         Option opt = ChoiceUtil.CtoO(birdChar);
         if (unlock) unlockedOptions = unlockedOptions | opt;
         else unlockedOptions = unlockedOptions & (~opt);
+    }
+    public bool GetUnlockedOption(char birdChar)
+    {
+        Option option = ChoiceUtil.CtoO(birdChar);
+        return ((option & unlockedOptions) != Option.NONE);
     }
 
     /* Returns true if and only if 'choice' is a correct and available value for 'currentChoice'

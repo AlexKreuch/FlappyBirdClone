@@ -17,13 +17,24 @@ public class MainMenuController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        foreach (char c in "BRG") BirdPicker.instance.SetUnlockedOption(c,true);
-        BirdPicker.instance.SetChoice('B');
+        SetUpBirdPicker();
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    private void SetUpBirdPicker()
+    {
+        void SRGBsender(char selection, bool unlockRed, bool unlockGreen, bool unlockBlue)
+        {
+            BirdPicker.instance.SetUnlockedOption('R', unlockRed);
+            BirdPicker.instance.SetUnlockedOption('G', unlockGreen);
+            BirdPicker.instance.SetUnlockedOption('B', unlockBlue);
+            BirdPicker.instance.SetChoice(selection);
+        }
+        GameController.instance.SendInfo(FlappyBirdUtil.MessageToController.BirdSelectionSetupRequest.Create(SRGBsender));
     }
 }

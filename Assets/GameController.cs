@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using static FlappyBirdUtil.MessageToController;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 
 public class GameController : MonoBehaviour
 {
@@ -9,6 +11,7 @@ public class GameController : MonoBehaviour
     {
         if (instance != null) { Destroy(this); return; }
         instance = this;
+        if (!Initialized) InitialSetup();
         DontDestroyOnLoad(gameObject);
     }
 
@@ -36,19 +39,6 @@ public class GameController : MonoBehaviour
         set { PlayerPrefs.SetInt(INITIALIZED,value ? 1 : 0); }
     }
     // NOTE : 1:=BLUE , 2:=RED , 4:=GREEN
-    private bool _getBirdUnlocked(int birdFlag)
-    {
-        int tmp = PlayerPrefs.GetInt(UNLOCKEDBIRDS, 0);
-        tmp = tmp & birdFlag;
-        return tmp != 0;
-    }
-    private void _setBirdUnlocked(bool val, int birdFlag)
-    {
-        int tmp = PlayerPrefs.GetInt(UNLOCKEDBIRDS, 0);
-        tmp = tmp & (7 - birdFlag);
-        if (val) tmp += birdFlag;
-        PlayerPrefs.SetInt(UNLOCKEDBIRDS, tmp);
-    }
     private bool BlueUnlocked
     {
         get { return _getBirdUnlocked(1); }
@@ -66,11 +56,7 @@ public class GameController : MonoBehaviour
     }
     #endregion
 
-    void OnEnable()
-    {
-        MakeInstance();
-    }
-
+    #region public-methods
     public void GetUnlockedBirds(ref bool blue, ref bool red, ref bool green)
     {
         blue = BlueUnlocked;
@@ -78,6 +64,68 @@ public class GameController : MonoBehaviour
         green = GreenUnlocked;
     }
 
-   
+    public void SendInfo(IMessage message)
+    {
+        switch (message.GetMessageType())
+        {
+           case messageType.BIRD_SELECTION_SETUP_REQUEST: HandleBirdSelectorSetupRequest(message.GetUnit()); break;
+        }
+    }
+
+    #endregion
+
+    #region helper-methods
+        private void InitialSetup()
+        {
+            if (Initialized) PlayerPrefs.DeleteAll(); // reset if needed
+
+            HighScore = 0;
+
+            BlueUnlocked  = true;
+            RedUnlocked = false ;
+            GreenUnlocked = true;
+        
+            Initialized = true;
+        }
+        private bool _getBirdUnlocked(int birdFlag)
+        {
+            int tmp = PlayerPrefs.GetInt(UNLOCKEDBIRDS, 0);
+            tmp = tmp & birdFlag;
+            return tmp != 0;
+        }
+        private void _setBirdUnlocked(bool val, int birdFlag)
+    {
+        int tmp = PlayerPrefs.GetInt(UNLOCKEDBIRDS, 0);
+        if (val) tmp = tmp | birdFlag;
+        else tmp = tmp & (~birdFlag);
+        PlayerPrefs.SetInt(UNLOCKEDBIRDS, tmp);
+    }
+    #region message-handlers
+    private void HandleBirdSelectorSetupRequest(Unit unit)
+    {
+        var bssr = (BirdSelectionSetupRequest)unit;
+        char selected = 'B';
+        bssr.BlueUnlocked = BlueUnlocked;
+        bssr.RedUnlocked = RedUnlocked;
+        bssr.GreenUnlocked = GreenUnlocked;
+        switch (selected)
+        {
+            case 'B': bssr.SelectBlue(); break;
+            case 'R': bssr.SelectRed(); break;
+            case 'G': bssr.SelectGreen(); break;
+        }
+        bssr.Send();
+    }
+        #endregion
+    #endregion
+
+
+
+    void OnEnable()
+    {
+        MakeInstance();
+    }
+
+    
 }
 
