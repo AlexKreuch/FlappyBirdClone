@@ -5,13 +5,15 @@ using UnityEngine;
 public class MainMenuController : MonoBehaviour
 {
 
-    private void LoadUnlockedOptionsToBirdPicker()
+    private void SetUpBirdPicker()
     {
-        bool b = false, r = false, g = false;
-        GameController.instance.GetUnlockedBirds(ref b, ref r, ref g);
-        BirdPicker.instance.SetUnlockedOption('B', b);
-        BirdPicker.instance.SetUnlockedOption('R', r);
+        char brd = 'B';
+        bool r = false, g = false, b = false;
+        GameController.MMPort.GetBirdPickerSetUp(ref brd, ref r, ref g, ref b);
+        BirdPicker.instance.SetUnlockedOption('R',r);
         BirdPicker.instance.SetUnlockedOption('G', g);
+        BirdPicker.instance.SetUnlockedOption('B', b);
+        BirdPicker.instance.SetChoice(brd);
     }
 
     // Start is called before the first frame update
@@ -26,15 +28,5 @@ public class MainMenuController : MonoBehaviour
         
     }
 
-    private void SetUpBirdPicker()
-    {
-        void SRGBsender(char selection, bool unlockRed, bool unlockGreen, bool unlockBlue)
-        {
-            BirdPicker.instance.SetUnlockedOption('R', unlockRed);
-            BirdPicker.instance.SetUnlockedOption('G', unlockGreen);
-            BirdPicker.instance.SetUnlockedOption('B', unlockBlue);
-            BirdPicker.instance.SetChoice(selection);
-        }
-        GameController.instance.SendInfo(FlappyBirdUtil.MessageToController.BirdSelectionSetupRequest.Create(SRGBsender));
-    }
+  
 }

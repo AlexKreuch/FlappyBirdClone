@@ -17,12 +17,7 @@ public class Helper001 : MonoBehaviour
             action();
         }
     }
-
-
-    private const string animName = "BlueBirdFlapping";
-    private const string boxName = "SpriteBox";
-
-    public bool test = false;
+    
     private int count = 0;
     private void Report(string msg, params object[] fields)
     {
@@ -30,17 +25,24 @@ public class Helper001 : MonoBehaviour
         Debug.Log(res);
     }
 
-    private class SpriteGetter
+    public enum birds { BLUE, RED, GREEN }
+    public birds choice = birds.BLUE;
+    public bool Blue = false, Red = false, Green = false;
+    public bool RESET = false;
+    private void Reset()
     {
-        private static Sprite[] sprites = null;
-        public static Sprite[] Get()
+        if (!Application.isPlaying) return;
+        BirdPicker.instance.SetUnlockedOption('B', Blue);
+        BirdPicker.instance.SetUnlockedOption('R', Red);
+        BirdPicker.instance.SetUnlockedOption('G', Green);
+        char c = 'B';
+        switch (choice)
         {
-            if (sprites == null)
-            {
-                sprites = Resources.Load<SpriteResource>(boxName).GetBirdSprites();
-            }
-            return sprites;
+            case birds.BLUE: c = 'B'; break;
+            case birds.GREEN: c = 'G'; break;
+            case birds.RED: c = 'R'; break;
         }
+        BirdPicker.instance.SetChoice(c);
     }
 
    
@@ -48,5 +50,6 @@ public class Helper001 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        BtnMech(ref RESET, Reset);
     }
 }
