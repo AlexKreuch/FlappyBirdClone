@@ -7,6 +7,7 @@ public class MainMenuController : MonoBehaviour
 
     private void SetUpBirdPicker()
     {
+        Debug.Log("MainMenuController-SetUpBirdPicker");
         char brd = 'B';
         bool r = false, g = false, b = false;
         GameController.MMPort.GetBirdPickerSetUp(ref brd, ref r, ref g, ref b);

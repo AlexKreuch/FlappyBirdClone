@@ -1,22 +1,72 @@
-﻿using System.Collections;
+﻿#define TESTING_MODE
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+#if TESTING_MODE
+#else
+
+using System.Runtime.CompilerServices;
+#endif
 
 public class GameController : MonoBehaviour
 {
+    #region conditianally defined Report-method
+#if TESTING_MODE
+    private void Report() { Debug.Log(""); }
+    private void Report(string msg, params object[] data)
+    {
+        Debug.Log(string.Format(msg,data));
+    }
+#else
+    private void Report(params object[] data)
+    {
+        Debug.Log("missed report-cleanup in GameController ; paramLen==" + data.Length);
+    }
+#endif
+#endregion
+#region define setup-struct for testing
+#if TESTING_MODE
+    private struct SetUpInfo
+    {
+        public bool red;
+        public bool green;
+        public bool blue;
+        public char brd;
+        public SetUpInfo(bool r, bool g, bool b, char br)
+        {
+            red = r;
+            green = g;
+            blue = b;
+            brd = br;
+        }
+    }
+    private SetUpInfo setUpInfo = new SetUpInfo(false,true,true,'G');
+#endif
+#endregion
+
     public static GameController instance;
     private void MakeInstance()
     {
-        if (instance != null) { Destroy(this); return; }
+        Report("GC-MakeInstance");
+        if (instance != null)
+        {
+            Report("GC-MakeInstace : destroy-redundant");
+            Destroy(this); return;
+        }
         instance = this;
-        if (!Initialized) InitialSetup();
+        Report("GC-MakeInstace : setting-up");
+#if TESTING_MODE
+        InitialSetup();
+#else
+        if (!Initialized)InitialSetup();
+#endif
         DontDestroyOnLoad(gameObject);
     }
 
     
 
-    #region play-pref-keys
+#region play-pref-keys
     private const string INITIALIZED = "initialized";
     private const string HIGHSCORE = "highScore";
     private const string UNLOCKEDBIRDS = "unlocked-birds";
@@ -25,9 +75,9 @@ public class GameController : MonoBehaviour
     private const int REDFLAG = 2;
     private const int GREENFLAG = 4;
     private const int DEFAULTBIRDFLAG = BLUEFLAG;
-    #endregion
+#endregion
 
-    #region private-properties
+#region private-properties
     private int HighScore
     {
         get
@@ -84,15 +134,32 @@ public class GameController : MonoBehaviour
             PlayerPrefs.SetInt(CURRENTBIRD,flag);
         }
     }
-    #endregion
+#endregion
 
-    #region public-methods
- 
+#region public-methods
 
-    #endregion
 
-    #region helper-methods
-        private void InitialSetup()
+#endregion
+
+#region helper-methods
+
+#region conditionally define InitialSetup for testing
+#if TESTING_MODE
+    private void InitialSetup()
+    {
+        Report("InitialSetUp");
+        Debug.Log("GameController-initial-setup");
+        PlayerPrefs.DeleteAll();
+        Initialized = true;
+        HighScore = 0;
+        BlueUnlocked = setUpInfo.blue;
+        RedUnlocked = setUpInfo.red;
+        GreenUnlocked = setUpInfo.green;
+        CurrentBird = setUpInfo.brd;
+    }
+#else
+
+    private void InitialSetup()
         {
             if (Initialized) PlayerPrefs.DeleteAll(); // reset if needed
 
@@ -106,7 +173,10 @@ public class GameController : MonoBehaviour
         
             Initialized = true;
         }
-        private bool _getBirdUnlocked(int birdFlag)
+
+#endif
+#endregion
+    private bool _getBirdUnlocked(int birdFlag)
         {
             int tmp = PlayerPrefs.GetInt(UNLOCKEDBIRDS, 0);
             tmp = tmp & birdFlag;
@@ -120,12 +190,13 @@ public class GameController : MonoBehaviour
         PlayerPrefs.SetInt(UNLOCKEDBIRDS, tmp);
     }
    
-    #endregion
+#endregion
 
 
 
     void OnEnable()
     {
+        Report("GC-OnEnable");
         MakeInstance();
     }
 
