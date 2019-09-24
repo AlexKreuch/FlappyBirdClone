@@ -53,15 +53,15 @@ public class Helper001 : MonoBehaviour
         BtnMech(ref RESET, Reset);
         BtnMech(ref testFader, TestFader);
     }
-
+    public enum FadeType { ROUGH = 0, SMOOTH = 1, MAINTHREAD = 2 }
     public bool testFader = false;
     private void TestFader()
     {
         if (!Application.isPlaying) return;
-        SceneFader.instance.TestFade(frameCount,fadeTime,useSmooth,callCount++);
+        SceneFader.instance.TestFade(frameCount,fadeTime,(int)fadeType,callCount++);
     }
     public int frameCount = 0;
     public float fadeTime = 0f;
-    public bool useSmooth = false;
+    public FadeType fadeType = FadeType.ROUGH;
     private int callCount = 0;
 }
