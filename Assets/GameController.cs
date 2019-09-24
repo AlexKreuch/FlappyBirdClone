@@ -157,8 +157,8 @@ public class GameController : MonoBehaviour
             redUnlocked = instance.RedUnlocked;
             greenUnlocked = instance.GreenUnlocked;
         }
+        
     }
-    
-    
+
 }
 
