@@ -51,5 +51,16 @@ public class Helper001 : MonoBehaviour
     void Update()
     {
         BtnMech(ref RESET, Reset);
+        BtnMech(ref testFader, TestFader);
     }
+
+    public bool testFader = false;
+    private void TestFader()
+    {
+        if (!Application.isPlaying) return;
+        SceneFader.instance.TestFade(frameCount,fadeTime,callCount++);
+    }
+    public int frameCount = 0;
+    public float fadeTime = 0f;
+    private int callCount = 0;
 }
