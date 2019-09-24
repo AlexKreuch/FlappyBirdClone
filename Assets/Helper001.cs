@@ -58,9 +58,10 @@ public class Helper001 : MonoBehaviour
     private void TestFader()
     {
         if (!Application.isPlaying) return;
-        SceneFader.instance.TestFade(frameCount,fadeTime,callCount++);
+        SceneFader.instance.TestFade(frameCount,fadeTime,useSmooth,callCount++);
     }
     public int frameCount = 0;
     public float fadeTime = 0f;
+    public bool useSmooth = false;
     private int callCount = 0;
 }

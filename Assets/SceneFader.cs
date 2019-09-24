@@ -54,9 +54,70 @@ public class SceneFader : MonoBehaviour
         panel.SetActive(false);
     }
 
-    public void TestFade(int count=10, float time=1f,int flag=0)
+    public void TestFade(int count = 10, float time = 1f, bool smooth = false,int flag=0)
     {
-        void f() { Debug.Log("FADE-EVENT : " + flag); }
-        StartCoroutine(FadeMech(count,time,f));
+        if (smooth)
+        {
+            void f() { Debug.Log("Fade-event (smooth-version) : " + flag); }
+            StartCoroutine(FadeMech_smooth(time,f));
+        }
+        else
+        {
+            void f() { Debug.Log("FADE-EVENT : " + flag); }
+            StartCoroutine(FadeMech(count, time, f));
+        }
+    }
+
+    private IEnumerator FadeMech_smooth(float time, Action action)
+    {
+        if (time <= 0) time = .0001f;
+
+        Func<float,float,Color> MakeFunc(Color color0, Color color1, float delta)
+        {
+            if (delta <= 0) { return (v,o)=>(v<=o ? color0 : color1); }
+            Color _color = (color1 - color0) / delta;
+            Color f(float cur, float offset)
+            {
+                cur = Mathf.Clamp(cur,offset,offset+delta);
+                return _color * (cur - offset) + color0;
+            }
+            return f;
+        }
+
+
+        Color c0 = new Color(0f, 0f, 0f, 0f);
+        Color c1 = new Color(0f, 0f, 0f, 1);
+        var faderFunc0 = MakeFunc(c0,c1,time);
+        var faderFunc1 = MakeFunc(c1,c0,time);
+
+        float startTime = Time.time;
+        float curTime = startTime;
+        float endTime = startTime + time;
+
+        image.color = new Color(0, 0, 0, 0);
+
+        panel.SetActive(true);
+
+        while (curTime<endTime)
+        {
+            yield return null;
+            curTime = Time.time;
+            image.color = faderFunc0(curTime, startTime);
+        }
+
+        action();
+
+        startTime = curTime;
+        endTime = startTime + time;
+
+        while (curTime < endTime)
+        {
+            yield return null;
+            curTime = Time.time;
+            image.color = faderFunc1(curTime, startTime);
+        }
+
+        panel.SetActive(false);
+        
     }
 }
