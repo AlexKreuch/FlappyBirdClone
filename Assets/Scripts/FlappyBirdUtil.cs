@@ -66,4 +66,10 @@ public class FlappyBirdUtil : MonoBehaviour
     {
         public const string GamePlayScene = "GamePlay";
     }
+
+    public class ResourcePaths
+    {
+        public const string SpriteRec = "SpriteBox";
+        public const string BirdRec = "BirdBox";
+    }
 }

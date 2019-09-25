@@ -56,3 +56,7 @@ MonoBehaviour:
   - {fileID: -7012614467759242416, guid: 7800e78ba23447d4db555eab9a9cdfa6, type: 3}
   - {fileID: 2479076729512883859, guid: 7800e78ba23447d4db555eab9a9cdfa6, type: 3}
   - {fileID: 2432741378779332653, guid: 7800e78ba23447d4db555eab9a9cdfa6, type: 3}
+  MedalSprites:
+  - {fileID: -1638759246192332772, guid: 7800e78ba23447d4db555eab9a9cdfa6, type: 3}
+  - {fileID: 8285390259773680045, guid: 7800e78ba23447d4db555eab9a9cdfa6, type: 3}
+  - {fileID: 3720059613459289301, guid: 7800e78ba23447d4db555eab9a9cdfa6, type: 3}
