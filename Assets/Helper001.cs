@@ -51,5 +51,16 @@ public class Helper001 : MonoBehaviour
     void Update()
     {
         BtnMech(ref RESET, Reset);
+        BtnMech(ref gotoGame, GotoGame);
     }
+
+    public bool gotoGame = false;
+    public float time = 0f;
+    private void GotoGame()
+    {
+        if (!Application.isPlaying) return;
+        bool flag = SceneFader.instance.StartFading(time,FlappyBirdUtil.Names.GamePlayScene);
+        if (!flag) Debug.Log("fader was busy");
+    }
+
 }
