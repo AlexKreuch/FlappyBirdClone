@@ -159,6 +159,10 @@ public class GameController : MonoBehaviour
         }
         public static void ReportNewBirdSelection(char selectedBird) { instance.CurrentBird = selectedBird; }
     }
-
+    public class GPPort // GP := GamePlay
+    {
+        public static char GetCurrentBird() { return instance.CurrentBird; }
+        public static int GetHighScore() { return instance.HighScore; }
+    }
 }
 
