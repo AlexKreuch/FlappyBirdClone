@@ -61,4 +61,9 @@ public class FlappyBirdUtil : MonoBehaviour
             }
         }
     }
+
+    public class Names
+    {
+        public const string GamePlayScene = "GamePlay";
+    }
 }

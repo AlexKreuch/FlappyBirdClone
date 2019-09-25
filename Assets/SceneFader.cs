@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System;
 
 
@@ -9,7 +10,9 @@ public class SceneFader : MonoBehaviour
 {
     public static SceneFader instance = null;
 
+    [SerializeField]
     private GameObject panel = null;
+    [SerializeField]
     private Image image = null;
 
     private void SetUp()
@@ -25,7 +28,7 @@ public class SceneFader : MonoBehaviour
 
     void OnEnable()
     {
-        if (instance != null) return;
+        if (instance != null) { Destroy(gameObject); return; }
         SetUp();
     }
 
@@ -54,7 +57,7 @@ public class SceneFader : MonoBehaviour
         panel.SetActive(false);
     }
 
-    private enum fadeType { ROUGH=0, SMOOTH=1, MAINTHREAD=2 }
+    private enum fadeType { ROUGH=0, SMOOTH=1, MAINTHREAD=2, GOTOGAME=3 , TEST_SCENE_LOAD_FROM_OUTSIDE_MAINTHREAD=4 }
     public void TestFade(int count = 10, float time = 1f, int ft = 0,int flag=0)
     {
         Action f = null;
@@ -72,7 +75,16 @@ public class SceneFader : MonoBehaviour
                 f = () => { Debug.Log("Fade-event <mainThread> : " + flag); };
                 FadeMech_mainThread(time,f);
                 break;
+            case (int)fadeType.GOTOGAME:
+                Debug.Log("goto-game called : " + flag);
+                FadeToGamePlay();
+                break;
+            case (int)fadeType.TEST_SCENE_LOAD_FROM_OUTSIDE_MAINTHREAD:
+                Debug.Log("testing to see if scenes can be loaded from outside the main thread : " + flag);
+                TestSceneLoader(FlappyBirdUtil.Names.GamePlayScene);
+                break;
         }
+
        
     }
 
@@ -223,5 +235,35 @@ public class SceneFader : MonoBehaviour
     void Update()
     {
         GetFMmain().STEP();
+    }
+
+    public void FadeToGamePlay(float time = 1.25f)
+    {
+        void f() { SceneManager.LoadScene(FlappyBirdUtil.Names.GamePlayScene); }
+        GetFMmain().START(time, f);
+    }
+
+    private class TestSceneLoader_class
+    {
+        /*
+         * Test whether a scene can be loaded from outside the main-thread
+         * **/
+        private static bool locked = false;
+        private static IEnumerator enumerator(string nxtLevelName)
+        {
+            SceneManager.LoadScene(nxtLevelName);
+            locked = false;
+            yield return null;
+        }
+        public static void RUN(MonoBehaviour mono,string levelName)
+        {
+            if (locked) return;
+            locked = true;
+            mono.StartCoroutine(enumerator(levelName));
+        }
+    }
+    public void TestSceneLoader(string ln)
+    {
+        TestSceneLoader_class.RUN(this,ln);
     }
 }

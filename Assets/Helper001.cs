@@ -53,7 +53,7 @@ public class Helper001 : MonoBehaviour
         BtnMech(ref RESET, Reset);
         BtnMech(ref testFader, TestFader);
     }
-    public enum FadeType { ROUGH = 0, SMOOTH = 1, MAINTHREAD = 2 }
+    public enum FadeType { ROUGH = 0, SMOOTH = 1, MAINTHREAD = 2, GOTOGAME = 3, TEST_SCENE_LOAD_FROM_OUTSIDE_MAINTHREAD = 4 }
     public bool testFader = false;
     private void TestFader()
     {
