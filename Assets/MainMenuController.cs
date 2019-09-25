@@ -2,15 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Runtime.CompilerServices;
 
 public class MainMenuController : MonoBehaviour
 {
-    int reportCount = 0;
-    private void report([CallerLineNumber]int ln = 0, [CallerMemberName] string nm = "")
-    {
-        Debug.Log(string.Format("({0})<{1}|line:{2}>",reportCount++,nm,ln));
-    }
 
     private void SetUpBirdPicker()
     {
@@ -44,13 +38,17 @@ public class MainMenuController : MonoBehaviour
     }
 
     #region Button-Handlers
-    private void GamesButtonHandler() { report(); }
-    private void PlayButtonHandler() { report(); }
-    private void RankButtonHandler() { report(); }
-    private void ShareButtonHandler() { report(); }
-    private void TwitterButtonHandler() { report(); }
+    private void GamesButtonHandler() {  }
+    private void PlayButtonHandler()
+    {
+        SaveBirdChoice();
+        SceneFader.instance.StartFading(FlappyBirdUtil.FadeTime,FlappyBirdUtil.Names.GamePlayScene);
+    }
+    private void RankButtonHandler() { }
+    private void ShareButtonHandler() {  }
+    private void TwitterButtonHandler() {  }
     #endregion
-
+     
 
 
     // Start is called before the first frame update

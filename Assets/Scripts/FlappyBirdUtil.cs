@@ -87,4 +87,7 @@ public class FlappyBirdUtil : MonoBehaviour
         }
       
     }
+
+    public const float FadeTime = 1.5f;
+
 }
