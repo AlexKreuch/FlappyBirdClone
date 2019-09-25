@@ -157,7 +157,7 @@ public class GameController : MonoBehaviour
             redUnlocked = instance.RedUnlocked;
             greenUnlocked = instance.GreenUnlocked;
         }
-        
+        public static void ReportNewBirdSelection(char selectedBird) { instance.CurrentBird = selectedBird; }
     }
 
 }

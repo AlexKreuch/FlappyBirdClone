@@ -284,7 +284,7 @@ GameObject:
   - component: {fileID: 463096224}
   m_Layer: 5
   m_Name: RankButton
-  m_TagString: Untagged
+  m_TagString: RankButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -570,6 +570,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5d97f1c2d74f3d4bbde850c438fd05d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  panel: {fileID: 0}
+  image: {fileID: 0}
 --- !u!1 &749474139
 GameObject:
   m_ObjectHideFlags: 0
@@ -584,7 +586,7 @@ GameObject:
   - component: {fileID: 749474141}
   m_Layer: 5
   m_Name: GamesButton
-  m_TagString: Untagged
+  m_TagString: GamesButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -706,7 +708,7 @@ GameObject:
   - component: {fileID: 867519296}
   m_Layer: 5
   m_Name: PlayButton
-  m_TagString: Untagged
+  m_TagString: PlayButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -872,7 +874,7 @@ GameObject:
   - component: {fileID: 951589201}
   m_Layer: 5
   m_Name: BirdButton
-  m_TagString: Untagged
+  m_TagString: BirdSelectorButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1005,7 +1007,7 @@ GameObject:
   - component: {fileID: 1001879032}
   m_Layer: 0
   m_Name: ShareButton
-  m_TagString: Untagged
+  m_TagString: ShareButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1223,6 +1225,8 @@ MonoBehaviour:
   Red: 0
   Green: 1
   RESET: 0
+  gotoGame: 0
+  time: 0
 --- !u!4 &1373285617
 Transform:
   m_ObjectHideFlags: 0
@@ -1926,7 +1930,7 @@ GameObject:
   - component: {fileID: 2082782232}
   m_Layer: 5
   m_Name: TwitterButton
-  m_TagString: Untagged
+  m_TagString: TwitterButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

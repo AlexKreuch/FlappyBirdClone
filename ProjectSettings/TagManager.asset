@@ -11,6 +11,12 @@ TagManager:
   - PipeHolder
   - PipeGate
   - PipeCollector
+  - PlayButton
+  - RankButton
+  - GamesButton
+  - BirdSelectorButton
+  - TwitterButton
+  - ShareButton
   layers:
   - Default
   - TransparentFX

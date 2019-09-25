@@ -65,11 +65,26 @@ public class FlappyBirdUtil : MonoBehaviour
     public class Names
     {
         public const string GamePlayScene = "GamePlay";
+        public const string MainMenuScene = "MainMenu";
     }
 
     public class ResourcePaths
     {
         public const string SpriteRec = "SpriteBox";
         public const string BirdRec = "BirdBox";
+    }
+
+    public class Tags
+    {
+        public class MenuButtons
+        {
+            public const string Play = "PlayButton";
+            public const string Rank = "RankButton";
+            public const string Games = "GamesButton";
+            public const string Selector = "BirdSelectorButton";
+            public const string Twitter = "TwitterButton";
+            public const string Share = "ShareButton";
+        }
+      
     }
 }
