@@ -11,15 +11,30 @@ public class Bird : MonoBehaviour
     
     private void MakeInstance()
     {
+#if TESTING_MODE
+
+        if (instance == null)
+        {
+            ReporterTest.report("making-bird : {0}", gameObject.name);
+            instance = this;
+        }
+        else
+        {
+            ReporterTest.report("destroying-bird : {0}",gameObject.name);
+            Destroy(this);
+        }
+
+#else
         if (instance == null)
         {
             instance = this;
         }
         else
             Destroy(this);
+#endif
     }
 
-    #region AnimatorUtil-class (and set-up method)
+#region AnimatorUtil-class (and set-up method)
         /* Use this to interact with Animator
          * 
          * **/
@@ -54,18 +69,18 @@ public class Bird : MonoBehaviour
                 animator.SetInteger(StateName, 2);
             }
 
-            #region testing-code
-    #if TESTING_MODE
+#region testing-code
+#if TESTING_MODE
             public Animator GetAnimator() { return animator; }
-    #endif
-            #endregion
+#endif
+#endregion
         }
         private void SetUpAnimatorUtil()
         {
             AnimatorUtil.GetInst().SetUp(theAnimator);
         }
-    #endregion
-    #region audio-controller-class (and set-up method)
+#endregion
+#region audio-controller-class (and set-up method)
         /*
          * Use this to play Audio-clips
          * 
@@ -89,7 +104,7 @@ public class Bird : MonoBehaviour
              * **/
             public void SetUp(AudioSource auSo, AudioClip[] clipArr)
             {
-                #region check inputs
+#region check inputs
                 Debug.Assert
                     (
                         auSo != null && clipArr != null && clipArr.Length == 3 &&
@@ -97,7 +112,7 @@ public class Bird : MonoBehaviour
                         ,
                         "INVALID AudioController-setup"
                     );
-                #endregion
+#endregion
 
                 isSetUp = true;
                 audioSource = auSo;
@@ -122,18 +137,18 @@ public class Bird : MonoBehaviour
         {
             AudioController.GetInstance().SetUp(audioSource, audioClips);
         }
-    #endregion
+#endregion
 
-    #region fields
+#region fields
 
-        #region constant values
+#region constant values
             private const string PipeTag = "Pipe";
             private const string GateTag = "PipeGate";
             private const string FlapButtonTag = "FlapButton";
             private const string GroundTag = "Ground";
-        #endregion
+#endregion
 
-        #region Serialized-Fields
+#region Serialized-Fields
             [SerializeField]
             private float horizontalSpeed = 10f, boostSpeed = 5f;
             [SerializeField]
@@ -144,18 +159,18 @@ public class Bird : MonoBehaviour
             private AudioSource audioSource;
             [SerializeField]
             private AudioClip[] audioClips; // [flapping , ding , dead]
-        #endregion
+#endregion
 
-        #region state-fields
+#region state-fields
             private float cameraOffset = 0f;
             private bool shouldFlapWings = false;
             private bool alive = true;
             private int score = 0;
-        #endregion
+#endregion
 
-    #endregion
+#endregion
 
-    #region Helper-Methods
+#region Helper-Methods
 
 
         /* Tilt the Bird according to its vertical movement.
@@ -213,11 +228,11 @@ public class Bird : MonoBehaviour
 
         private void Die()
         {
-            #region testing code
-                #if TESTING_MODE
+#region testing code
+#if TESTING_MODE
                     if (Invincible) return;
-                #endif
-            #endregion
+#endif
+#endregion
             alive = false;
             AnimatorUtil.GetInst().Dead();
             AudioController.GetInstance().PlayDead();
@@ -240,7 +255,7 @@ public class Bird : MonoBehaviour
             Camera.main.transform.position = tmp;
         }
 
-    #endregion
+#endregion
 
 
     void Awake()
@@ -272,8 +287,17 @@ public class Bird : MonoBehaviour
         if (alive && (collision.collider.tag == PipeTag || collision.collider.tag == GroundTag)) Die();
     }
 
-#region Testing Code
+    #region Testing Code
 #if TESTING_MODE
+    private class ReporterTest
+    {
+        private static int count = 0;
+        public static void report(string msg, params object[] data)
+        {
+            msg = string.Format(msg,data);
+            Debug.Log(string.Format("<{0}> {1}",count++,msg));
+        }
+    }
     public void Testing_REVIVE()
     {
         alive = true;
@@ -286,7 +310,11 @@ public class Bird : MonoBehaviour
     }
     public Rigidbody2D Testing_GetRigidbody() { return theRigidbody; }
     public bool Invincible = true;
-    
+    public static void Testing_ERASE()
+    {
+        Destroy(instance.gameObject);
+        instance = null;
+    }
 #endif
 #endregion
 

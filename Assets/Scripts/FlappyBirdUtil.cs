@@ -85,7 +85,7 @@ public class FlappyBirdUtil : MonoBehaviour
             public const string Twitter = "TwitterButton";
             public const string Share = "ShareButton";
         }
-      
+        public static string FlapButtonTag = "FlapButton";
     }
 
     public const float FadeTime = 1.5f;
