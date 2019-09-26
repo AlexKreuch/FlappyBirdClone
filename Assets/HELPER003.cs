@@ -76,6 +76,7 @@ public class HELPER003 : MonoBehaviour
                 .AddKeyAction('j', mkAct(LEFT))
                 .AddKeyAction('l', mkAct(RIGHT))
                 .AddKeyAction(' ', Flap)
+                .AddKeyAction('p',TogglePause)
                 .Build();
         }
         return joystickMech;
@@ -107,5 +108,24 @@ public class HELPER003 : MonoBehaviour
     void Update()
     {
         RunJoyStick();
+    }
+
+    private void TogglePause()
+    {
+        if (!Application.isPlaying) return;
+        if (Time.timeScale == 0f)
+        {
+            PausePanelController.instance.PanelTurnedOn = false;
+            Time.timeScale = 1f;
+        }
+        else
+        {
+            PausePanelController.instance.SetHighScore(100);
+            PausePanelController.instance.SetScore(10);
+          //  PausePanelController.instance.SetMedal(FlappyBirdUtil.Flags.Medals.White);
+            PausePanelController.instance.SetMedal(-1);
+            PausePanelController.instance.PanelTurnedOn = true;
+            Time.timeScale = 0f;
+        }
     }
 }

@@ -4,6 +4,16 @@ using UnityEngine;
 
 public class FlappyBirdUtil : MonoBehaviour
 {
+    public class Flags
+    {
+        public class Medals
+        {
+            public const int White = 1;
+            public const int Orange = 2;
+            public const int Gold = 4;
+        }
+    }
+
     public class MessageToController
     {
         public enum messageType
@@ -66,6 +76,17 @@ public class FlappyBirdUtil : MonoBehaviour
     {
         public const string GamePlayScene = "GamePlay";
         public const string MainMenuScene = "MainMenu";
+        public class PausePanelFields
+        {
+            public const string MedalTxtLabel = "Label_Medal";
+            public const string ScoreTxtLabel = "Label_Score";
+            public const string HighScoreTxtLabel = "Label_HighScore";
+            public const string MedalImageDisplay = "Medal";
+            public const string ScoreTxtDisplay = "Display_Score";
+            public const string HighScoreTxtDisplay = "Display_HighScore";
+            public const string MainMenuBtn = "Button_Menu";
+            public const string PlayBtn = "Button_Play";
+        }
     }
 
     public class ResourcePaths
