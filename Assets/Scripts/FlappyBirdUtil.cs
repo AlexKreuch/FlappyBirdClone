@@ -110,6 +110,6 @@ public class FlappyBirdUtil : MonoBehaviour
         public static string PauseButtonTag = "PauseButton";
     }
 
-    public const float FadeTime = 1.5f;
+    public const float FadeTime = 1f;
 
 }

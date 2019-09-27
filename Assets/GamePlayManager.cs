@@ -34,6 +34,14 @@ public class GamePlayManager : MonoBehaviour
             case 'G': Instantiate(brdBox.GreenBird, startingPosition, new Quaternion()); break;
             case 'B': Instantiate(brdBox.BlueBird, startingPosition, new Quaternion()); break;
         }
+        StartCoroutine(WaitToFinishFadin());
+    }
+
+    private IEnumerator WaitToFinishFadin()
+    {
+        Bird.instance.SuspendMovement = true;
+        while (SceneFader.instance.CurrentlyFading()) yield return null;
+        Bird.instance.SuspendMovement = false;
     }
 
     private void PauseButtonHandler()
