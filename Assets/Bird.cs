@@ -257,7 +257,39 @@ public class Bird : MonoBehaviour
 
     #endregion
 
+    #region public methods/Properties
     public int GetCurrentScore() { return score; }
+    #region Suspend-movement
+    private bool _SuspednMovement_value = false;
+    private RigidbodyConstraints2D _SuspendMovement_savedRBC = RigidbodyConstraints2D.None;
+    public bool SuspendMovement
+    {
+        get
+        {
+            return _SuspednMovement_value;
+        }
+        set
+        {
+            int code = 0;
+            if (value) code += 1;
+            if (_SuspednMovement_value) code += 2;
+            switch (code)
+            {
+                case 1:
+                    _SuspendMovement_savedRBC = theRigidbody.constraints;
+                    theRigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
+                    _SuspednMovement_value = true;
+                    break;
+                case 2:
+                    theRigidbody.constraints = _SuspendMovement_savedRBC;
+                    _SuspednMovement_value = false;
+                    break;
+            }
+        }
+    }
+    #endregion
+
+    #endregion
 
     void Awake()
     {
