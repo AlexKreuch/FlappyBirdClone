@@ -5,6 +5,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GamePlayManager : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class GamePlayManager : MonoBehaviour
 
     private void SetUp()
     {
+        GameObject.FindGameObjectWithTag(FlappyBirdUtil.Tags.PauseButtonTag).GetComponent<Button>().onClick.AddListener(PauseButtonHandler);
         highScore = GameController.GPPort.GetHighScore();
         char brd = GameController.GPPort.GetCurrentBird();
         var brdBox = Resources.Load<BirdResource>(FlappyBirdUtil.ResourcePaths.BirdRec);
@@ -31,6 +33,8 @@ public class GamePlayManager : MonoBehaviour
             case 'B': Instantiate(brdBox.BlueBird, startingPosition, new Quaternion()); break;
         }
     }
+
+    private void PauseButtonHandler() { }
 
     void Start() { SetUp(); }
 }

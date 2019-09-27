@@ -17,6 +17,7 @@ TagManager:
   - BirdSelectorButton
   - TwitterButton
   - ShareButton
+  - PauseButton
   layers:
   - Default
   - TransparentFX

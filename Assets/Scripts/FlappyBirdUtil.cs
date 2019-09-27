@@ -107,6 +107,7 @@ public class FlappyBirdUtil : MonoBehaviour
             public const string Share = "ShareButton";
         }
         public static string FlapButtonTag = "FlapButton";
+        public static string PauseButtonTag = "PauseButton";
     }
 
     public const float FadeTime = 1.5f;
