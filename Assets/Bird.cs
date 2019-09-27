@@ -255,8 +255,9 @@ public class Bird : MonoBehaviour
             Camera.main.transform.position = tmp;
         }
 
-#endregion
+    #endregion
 
+    public int GetCurrentScore() { return score; }
 
     void Awake()
     {

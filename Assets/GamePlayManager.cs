@@ -16,6 +16,7 @@ public class GamePlayManager : MonoBehaviour
     private void SetUp()
     {
         GameObject.FindGameObjectWithTag(FlappyBirdUtil.Tags.PauseButtonTag).GetComponent<Button>().onClick.AddListener(PauseButtonHandler);
+        PausePanelController.instance.AddPlayButtonListener(PlayButtonHandler);
         highScore = GameController.GPPort.GetHighScore();
         char brd = GameController.GPPort.GetCurrentBird();
         var brdBox = Resources.Load<BirdResource>(FlappyBirdUtil.ResourcePaths.BirdRec);
@@ -34,7 +35,26 @@ public class GamePlayManager : MonoBehaviour
         }
     }
 
-    private void PauseButtonHandler() { }
+    private void PauseButtonHandler()
+    {
+        var pausePanel = PausePanelController.instance;
+        if (pausePanel.PanelTurnedOn) return;
+        Time.timeScale = 0f;
+        pausePanel.PanelTurnedOn = true;
+        pausePanel.SetHighScore(highScore);
+        pausePanel.SetScore(Bird.instance.GetCurrentScore());
+    }
+    private void PlayButtonHandler()
+    {
+        var pausePanel = PausePanelController.instance;
+        pausePanel.PanelTurnedOn = false;
+        Time.timeScale = 1f;
+    }
 
-    void Start() { SetUp(); }
+    void Start()
+    {
+        Debug.Log("SETTING-UP");
+        SetUp();
+
+    }
 }

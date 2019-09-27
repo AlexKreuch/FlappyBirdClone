@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class PausePanelController : MonoBehaviour
 {
@@ -82,4 +83,8 @@ public class PausePanelController : MonoBehaviour
             case Medal.GOLD: medalDisplay.sprite = medalSprites.Value.Orange; break;
         }
     }
+
+    public void AddPlayButtonListener(Action action) { PlayButton.onClick.AddListener(new UnityEngine.Events.UnityAction(action)); }
+    public void AddMenuButtonListener(Action action) { MainMenuButton.onClick.AddListener(new UnityEngine.Events.UnityAction(action)); }
+    
 }
