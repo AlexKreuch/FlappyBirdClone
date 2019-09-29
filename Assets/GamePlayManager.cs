@@ -46,6 +46,7 @@ public class GamePlayManager : MonoBehaviour
 
     private void PauseButtonHandler()
     {
+        UpdateHighScore();
         var pausePanel = PausePanelController.instance;
         if (pausePanel.PanelTurnedOn) return;
         Time.timeScale = 0f;
@@ -61,9 +62,20 @@ public class GamePlayManager : MonoBehaviour
     }
     private void MenuButtonHandler()
     {
+        ReportNewHighScore();
         Bird.instance.SuspendMovement = true;
         Time.timeScale = 1f;
         SceneFader.instance.StartFading(FlappyBirdUtil.FadeTime,FlappyBirdUtil.Names.MainMenuScene);
+    }
+
+    private void UpdateHighScore()
+    {
+        int currentScore = Bird.instance.GetCurrentScore();
+        if (currentScore > highScore) highScore = currentScore;
+    }
+    private void ReportNewHighScore()
+    {
+        GameController.GPPort.SetHighScore(highScore);
     }
 
     void Start()

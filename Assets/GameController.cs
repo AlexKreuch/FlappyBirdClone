@@ -31,16 +31,16 @@ public class GameController : MonoBehaviour
 
     
 
-#region play-pref-keys
-    private const string INITIALIZED = "initialized";
-    private const string HIGHSCORE = "highScore";
-    private const string UNLOCKEDBIRDS = "unlocked-birds";
-    private const string CURRENTBIRD = "currently-selected-bird";
-    private const int BLUEFLAG = 1;
-    private const int REDFLAG = 2;
-    private const int GREENFLAG = 4;
-    private const int DEFAULTBIRDFLAG = BLUEFLAG;
-#endregion
+    #region play-pref-keys
+        private const string INITIALIZED = "initialized";
+        private const string HIGHSCORE = "highScore";
+        private const string UNLOCKEDBIRDS = "unlocked-birds";
+        private const string CURRENTBIRD = "currently-selected-bird";
+        private const int BLUEFLAG = 1;
+        private const int REDFLAG = 2;
+        private const int GREENFLAG = 4;
+        private const int DEFAULTBIRDFLAG = BLUEFLAG;
+    #endregion
 
     #region private-properties
     private int HighScore
@@ -163,6 +163,7 @@ public class GameController : MonoBehaviour
     {
         public static char GetCurrentBird() { return instance.CurrentBird; }
         public static int GetHighScore() { return instance.HighScore; }
+        public static void SetHighScore(int newHighScore) { instance.HighScore = newHighScore; }
     }
 }
 
