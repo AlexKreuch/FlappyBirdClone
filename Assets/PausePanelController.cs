@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿#define TESTING_MODE
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,6 +16,8 @@ public class PausePanelController : MonoBehaviour
         ORANGE = FlappyBirdUtil.Flags.Medals.Orange,
         GOLD = FlappyBirdUtil.Flags.Medals.Gold
     }
+
+    public enum MODE { PAUSED , GAMEOVER }
 
     public static PausePanelController instance = null;
 
@@ -33,7 +36,15 @@ public class PausePanelController : MonoBehaviour
     private SpriteResource.MedalSpriteSet? medalSprites = null;
 
     #region button-handlers
-    private void PlayButtonHandler() { Debug.Log("play-btn : "+count++); }
+    private void PlayButtonHandler()
+    {
+        Debug.Log("play-btn : "+count++);
+        switch (currentMode)
+        {
+            case MODE.PAUSED: resumeGameAction(); break;
+            case MODE.GAMEOVER: restartGameAction(); break;
+        }
+    }
     private void MainMenuButtonHandler() { Debug.Log("menu-btn : " + count++); }
     private void InstructionsButtonHandler()
     {
@@ -117,23 +128,51 @@ public class PausePanelController : MonoBehaviour
         }
     }
 
-    public void AddPlayButtonListener(Action action) { PlayButton.onClick.AddListener(new UnityEngine.Events.UnityAction(action)); }
+    public void SetResumeGameAction(Action action)
+    {
+        if (action == null) action = () => { };
+        resumeGameAction = action;
+    }
+    public void SetRestartGameAction(Action action)
+    {
+        if (action == null) action = () => { };
+        restartGameAction = action;
+    }
     public void AddMenuButtonListener(Action action) { MainMenuButton.onClick.AddListener(new UnityEngine.Events.UnityAction(action)); }
 
-   
 
-    private bool gameOverVisible = false;
+    private Action resumeGameAction = () => { };
+    private Action restartGameAction = () => { };
+
+    [SerializeField]
+    private MODE currentMode = MODE.PAUSED;
+    
     private void MainTainGameOverVisible()
     {
         if (gameOverDisplay == null) return;
         Color tmp = gameOverDisplay.color;
-        tmp.a = gameOverVisible ? 1f : 0f;
+        tmp.a = (currentMode==MODE.GAMEOVER) ? 1f : 0f;
         gameOverDisplay.color = tmp;
     }
-    public bool GameOverVisible
+    public MODE Mode
     {
-        get { return gameOverVisible; }
-        set { gameOverVisible = value; MainTainGameOverVisible(); }
+        get { return currentMode; }
+        set { currentMode = value; MainTainGameOverVisible(); }
     }
+
+
+ 
+
+#if TESTING_MODE
+    private MODE savedMode = MODE.PAUSED;
+    private void CheckMode()
+    {
+        if (savedMode != currentMode)
+        {
+            savedMode = currentMode;
+            MainTainGameOverVisible();
+        }
+    }
+    void Update() { CheckMode(); }
+#endif
 }
-    
