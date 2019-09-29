@@ -152,7 +152,7 @@ public class HELPER003 : MonoBehaviour
             if (obj == savedObject) return;
             savedObject = obj;
             if (savedObject == null) { setter = SetterDefault; getter = GetterDefault; return; }
-            objs = new GameObject[] { savedObject, savedObject.GetComponentInChildren<Text>().gameObject };
+            objs = new GameObject[] { savedObject };
             void _setter(Vector2 v)
             {
                 var z = savedObject.transform.localScale.z;

@@ -21,6 +21,7 @@ public class PausePanelController : MonoBehaviour
     #region PausePanelFields
     private Text highScoreDisplay = null;
     private Text scoreDisplay = null;
+    private Text gameOverDisplay = null;
     private Image medalDisplay = null;
     private Image instructionsDisplay = null;
     private Button PlayButton = null;
@@ -64,6 +65,7 @@ public class PausePanelController : MonoBehaviour
             {
                 case FlappyBirdUtil.Names.PausePanelFields.ScoreTxtDisplay:scoreDisplay = txt; break;
                 case FlappyBirdUtil.Names.PausePanelFields.HighScoreTxtDisplay: highScoreDisplay = txt; break;
+                case FlappyBirdUtil.Names.PausePanelFields.GameOverTxt: gameOverDisplay = txt; MainTainGameOverVisible(); break;
             }
         var images = GetComponentsInChildren<Image>();
         foreach (var img in images)
@@ -117,5 +119,21 @@ public class PausePanelController : MonoBehaviour
 
     public void AddPlayButtonListener(Action action) { PlayButton.onClick.AddListener(new UnityEngine.Events.UnityAction(action)); }
     public void AddMenuButtonListener(Action action) { MainMenuButton.onClick.AddListener(new UnityEngine.Events.UnityAction(action)); }
-    
+
+   
+
+    private bool gameOverVisible = false;
+    private void MainTainGameOverVisible()
+    {
+        if (gameOverDisplay == null) return;
+        Color tmp = gameOverDisplay.color;
+        tmp.a = gameOverVisible ? 1f : 0f;
+        gameOverDisplay.color = tmp;
+    }
+    public bool GameOverVisible
+    {
+        get { return gameOverVisible; }
+        set { gameOverVisible = value; MainTainGameOverVisible(); }
+    }
 }
+    

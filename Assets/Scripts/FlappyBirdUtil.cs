@@ -80,6 +80,7 @@ public class FlappyBirdUtil : MonoBehaviour
         {
             public const string MedalTxtLabel = "Label_Medal";
             public const string ScoreTxtLabel = "Label_Score";
+            public const string GameOverTxt = "GameOverText";
             public const string HighScoreTxtLabel = "Label_HighScore";
             public const string MedalImageDisplay = "Medal";
             public const string ScoreTxtDisplay = "Display_Score";
