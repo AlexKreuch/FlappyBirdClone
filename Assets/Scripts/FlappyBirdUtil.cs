@@ -86,6 +86,8 @@ public class FlappyBirdUtil : MonoBehaviour
             public const string HighScoreTxtDisplay = "Display_HighScore";
             public const string MainMenuBtn = "Button_Menu";
             public const string PlayBtn = "Button_Play";
+            public const string InstructionBtn = "Button_Instructions";
+            public const string InstructionsImage = "Image_Instructions";
         }
     }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
-
+[ExecuteAlways]
 public class HELPER003 : MonoBehaviour
 {
     private class KeySystem
@@ -108,6 +108,7 @@ public class HELPER003 : MonoBehaviour
     void Update()
     {
         RunJoyStick();
+        MaintainScale();
     }
 
     private void TogglePause()
@@ -126,6 +127,55 @@ public class HELPER003 : MonoBehaviour
             PausePanelController.instance.SetMedal(-1);
             PausePanelController.instance.PanelTurnedOn = true;
             Time.timeScale = 0f;
+        }
+    }
+
+    public GameObject ScaleThis = null;
+    private class ScaleMech
+    {
+        private static void SetterDefault(Vector2 v) { }
+        private static Vector2 GetterDefault() { return new Vector2(1f,1f); }
+
+        private static GameObject savedObject = null;
+        private static GameObject[] objs = null;
+        private static Action<Vector2> setter = SetterDefault;
+        private static Func<Vector2> getter = GetterDefault;
+
+        public static Vector2 Size
+        {
+            get { return getter(); }
+            set { setter(value); }
+        }
+
+        public static void SetUp(GameObject obj)
+        {
+            if (obj == savedObject) return;
+            savedObject = obj;
+            if (savedObject == null) { setter = SetterDefault; getter = GetterDefault; return; }
+            objs = new GameObject[] { savedObject, savedObject.GetComponentInChildren<Text>().gameObject };
+            void _setter(Vector2 v)
+            {
+                var z = savedObject.transform.localScale.z;
+                var vec = new Vector3(v.x,v.y,z);
+                foreach (var _obj in objs) { _obj.transform.localScale = vec; }
+            }
+            Vector2 _getter()
+            {
+                var v = savedObject.transform.localScale;
+                return new Vector2(v.x,v.y);
+            }
+            setter = _setter;
+            getter = _getter;
+        }
+    }
+    private void MaintainScale()
+    {
+        ScaleMech.SetUp(ScaleThis);
+        var tmp = ScaleMech.Size;
+        if (tmp.x!=tmp.y)
+        {
+            tmp.y = tmp.x;
+            ScaleMech.Size = tmp;
         }
     }
 }

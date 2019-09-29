@@ -6,6 +6,9 @@ using System;
 
 public class PausePanelController : MonoBehaviour
 {
+    private const string ShowInstLabel = "show\ninstructions";
+    private const string HideInstLabel = "hide\ninstructions";
+
     private enum Medal
     {
         WHITE = FlappyBirdUtil.Flags.Medals.White,
@@ -19,8 +22,11 @@ public class PausePanelController : MonoBehaviour
     private Text highScoreDisplay = null;
     private Text scoreDisplay = null;
     private Image medalDisplay = null;
+    private Image instructionsDisplay = null;
     private Button PlayButton = null;
     private Button MainMenuButton = null;
+    private Button InstructionsButton = null;
+    private Text InstructionsButtonText = null;
     #endregion
 
     private SpriteResource.MedalSpriteSet? medalSprites = null;
@@ -28,6 +34,24 @@ public class PausePanelController : MonoBehaviour
     #region button-handlers
     private void PlayButtonHandler() { Debug.Log("play-btn : "+count++); }
     private void MainMenuButtonHandler() { Debug.Log("menu-btn : " + count++); }
+    private void InstructionsButtonHandler()
+    {
+        Debug.Log("instr-btn : " + count++);
+        if (InstructionsButtonText.text == ShowInstLabel)
+        {
+            InstructionsButtonText.text = HideInstLabel;
+            Color tmp = instructionsDisplay.color;
+            tmp.a = 1f;
+            instructionsDisplay.color = tmp;
+        }
+        else
+        {
+            InstructionsButtonText.text = ShowInstLabel;
+            Color tmp = instructionsDisplay.color;
+            tmp.a = 0f;
+            instructionsDisplay.color = tmp;
+        }
+    }
     #endregion
 
     private void SetUp()
@@ -46,6 +70,7 @@ public class PausePanelController : MonoBehaviour
             switch (img.name)
             {
                 case FlappyBirdUtil.Names.PausePanelFields.MedalImageDisplay:medalDisplay = img; break;
+                case FlappyBirdUtil.Names.PausePanelFields.InstructionsImage:instructionsDisplay = img; break;
             }
         var buttons = GetComponentsInChildren<Button>();
         foreach(var btn in buttons)
@@ -53,6 +78,12 @@ public class PausePanelController : MonoBehaviour
             {
                 case FlappyBirdUtil.Names.PausePanelFields.MainMenuBtn: MainMenuButton = btn; MainMenuButton.onClick.AddListener(MainMenuButtonHandler); break;
                 case FlappyBirdUtil.Names.PausePanelFields.PlayBtn: PlayButton = btn; PlayButton.onClick.AddListener(PlayButtonHandler); break;
+                case FlappyBirdUtil.Names.PausePanelFields.InstructionBtn:
+                    InstructionsButton = btn;
+                    InstructionsButton.onClick.AddListener(InstructionsButtonHandler);
+                    InstructionsButtonText = InstructionsButton.gameObject.GetComponentInChildren<Text>();
+                    InstructionsButtonText.text = ShowInstLabel;
+                    break;
             }
 
         medalSprites = Resources.Load<SpriteResource>(FlappyBirdUtil.ResourcePaths.SpriteRec).GetMedalSprites();
