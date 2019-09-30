@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Runtime.CompilerServices;
+using System;
 
 public class Bird : MonoBehaviour
 {
     public static Bird instance;
-    
+
     private void MakeInstance()
     {
 #if TESTING_MODE
@@ -20,7 +21,7 @@ public class Bird : MonoBehaviour
         }
         else
         {
-            ReporterTest.report("destroying-bird : {0}",gameObject.name);
+            ReporterTest.report("destroying-bird : {0}", gameObject.name);
             Destroy(this);
         }
 
@@ -34,139 +35,145 @@ public class Bird : MonoBehaviour
 #endif
     }
 
-#region AnimatorUtil-class (and set-up method)
-        /* Use this to interact with Animator
-         * 
+    #region AnimatorUtil-class (and set-up method)
+    /* Use this to interact with Animator
+     * 
+     * **/
+    private class AnimatorUtil
+    {
+
+        private static AnimatorUtil instance = new AnimatorUtil();
+        public static AnimatorUtil GetInst() { return instance; }
+
+        private Animator animator = null;
+        public void SetUp(Animator anim) { animator = anim; }
+
+        /* Set the int-parameter 'BirdState' of the animator to : 
+         *    -> 0, for the Idol-animation
+         *    -> 1, for the Flapping-animation
+         *    -> 2, for the Dead-animation
          * **/
-        private class AnimatorUtil
+        private const string StateName = "BirdState";
+        public void FlapWings()
         {
-        
-            private static AnimatorUtil instance = new AnimatorUtil();
-            public static AnimatorUtil GetInst() { return instance; }
+            if (animator == null) return;
+            animator.SetInteger(StateName, 1);
+        }
+        public void Idol()
+        {
+            if (animator == null) return;
+            animator.SetInteger(StateName, 0);
+        }
+        public void Dead()
+        {
+            if (animator == null) return;
+            animator.SetInteger(StateName, 2);
+        }
 
-            private Animator animator = null;
-            public void SetUp(Animator anim) { animator = anim; }
-
-            /* Set the int-parameter 'BirdState' of the animator to : 
-             *    -> 0, for the Idol-animation
-             *    -> 1, for the Flapping-animation
-             *    -> 2, for the Dead-animation
-             * **/
-            private const string StateName = "BirdState";
-            public void FlapWings()
-            {
-                if (animator == null) return;
-                animator.SetInteger(StateName, 1);
-            }
-            public void Idol()
-            {
-                if (animator == null) return;
-                animator.SetInteger(StateName, 0);
-            }
-            public void Dead()
-            {
-                if (animator == null) return;
-                animator.SetInteger(StateName, 2);
-            }
-
-#region testing-code
+        #region testing-code
 #if TESTING_MODE
-            public Animator GetAnimator() { return animator; }
+        public Animator GetAnimator() { return animator; }
 #endif
-#endregion
-        }
-        private void SetUpAnimatorUtil()
-        {
-            AnimatorUtil.GetInst().SetUp(theAnimator);
-        }
-#endregion
-#region audio-controller-class (and set-up method)
-        /*
-         * Use this to play Audio-clips
+        #endregion
+    }
+    private void SetUpAnimatorUtil()
+    {
+        AnimatorUtil.GetInst().SetUp(theAnimator);
+    }
+    #endregion
+    #region audio-controller-class (and set-up method)
+    /*
+     * Use this to play Audio-clips
+     * 
+     * **/
+    private class AudioController
+    {
+        private static AudioController instance = new AudioController();
+        public static AudioController GetInstance() { return instance; }
+
+        private const int FlappingSoundIndex = 0;
+        private const int DingSoundIndex = 1;
+        private const int DeadSoundIndex = 2;
+
+        private bool isSetUp = false;
+        private AudioSource audioSource = null;
+        private AudioClip[] clips = null;
+
+        /* Both fields must be non-null, and clipArr must have the form : 
+         *   [ flappingClip , DingClip , DeadClip ]
          * 
          * **/
-        private class AudioController
+        public void SetUp(AudioSource auSo, AudioClip[] clipArr)
         {
-            private static AudioController instance = new AudioController();
-            public static AudioController GetInstance() { return instance; }
+            #region check inputs
+            Debug.Assert
+                (
+                    auSo != null && clipArr != null && clipArr.Length == 3 &&
+                    clipArr[0] != null && clipArr[1] != null && clipArr[2] != null
+                    ,
+                    "INVALID AudioController-setup"
+                );
+            #endregion
 
-            private const int FlappingSoundIndex = 0;
-            private const int DingSoundIndex = 1;
-            private const int DeadSoundIndex = 2;
-
-            private bool isSetUp = false;
-            private AudioSource audioSource = null;
-            private AudioClip[] clips = null;
-
-            /* Both fields must be non-null, and clipArr must have the form : 
-             *   [ flappingClip , DingClip , DeadClip ]
-             * 
-             * **/
-            public void SetUp(AudioSource auSo, AudioClip[] clipArr)
-            {
-#region check inputs
-                Debug.Assert
-                    (
-                        auSo != null && clipArr != null && clipArr.Length == 3 &&
-                        clipArr[0] != null && clipArr[1] != null && clipArr[2] != null
-                        ,
-                        "INVALID AudioController-setup"
-                    );
-#endregion
-
-                isSetUp = true;
-                audioSource = auSo;
-                clips = clipArr;
-            }
-
-            private void PlaySound(int index)
-            {
-                if (!isSetUp) return;
-                audioSource.PlayOneShot(clips[index]);
-            }
-
-        
-            public void PlayFlapping() { PlaySound(FlappingSoundIndex); }
-            public void PlayDing() { PlaySound(DingSoundIndex); }
-            public void PlayDead() { PlaySound(DeadSoundIndex); }
-
-           
-
+            isSetUp = true;
+            audioSource = auSo;
+            clips = clipArr;
         }
-        private void SetUpAudioController()
+
+        private void PlaySound(int index)
         {
-            AudioController.GetInstance().SetUp(audioSource, audioClips);
+            if (!isSetUp) return;
+            audioSource.PlayOneShot(clips[index]);
         }
-#endregion
 
-#region fields
 
-#region constant values
-            private const string PipeTag = "Pipe";
-            private const string GateTag = "PipeGate";
-            private const string FlapButtonTag = "FlapButton";
-            private const string GroundTag = "Ground";
-#endregion
+        public void PlayFlapping() { PlaySound(FlappingSoundIndex); }
+        public void PlayDing() { PlaySound(DingSoundIndex); }
+        public void PlayDead() { PlaySound(DeadSoundIndex); }
 
-#region Serialized-Fields
-            [SerializeField]
-            private float horizontalSpeed = 10f, boostSpeed = 5f;
-            [SerializeField]
-            private Rigidbody2D theRigidbody;
-            [SerializeField]
-            private Animator theAnimator;
-            [SerializeField]
-            private AudioSource audioSource;
-            [SerializeField]
-            private AudioClip[] audioClips; // [flapping , ding , dead]
-#endregion
 
-#region state-fields
-            private float cameraOffset = 0f;
-            private bool shouldFlapWings = false;
-            private bool alive = true;
-            private int score = 0;
-#endregion
+
+    }
+    private void SetUpAudioController()
+    {
+        AudioController.GetInstance().SetUp(audioSource, audioClips);
+    }
+    #endregion
+
+    #region fields
+
+    #region constant values
+    private const string PipeTag = "Pipe";
+    private const string GateTag = "PipeGate";
+    private const string FlapButtonTag = "FlapButton";
+    private const string GroundTag = "Ground";
+    #endregion
+
+    #region Serialized-Fields
+    [SerializeField]
+    private float horizontalSpeed = 10f, boostSpeed = 5f;
+    [SerializeField]
+    private Rigidbody2D theRigidbody;
+    [SerializeField]
+    private Animator theAnimator;
+    [SerializeField]
+    private AudioSource audioSource;
+    [SerializeField]
+    private AudioClip[] audioClips; // [flapping , ding , dead]
+    #endregion
+
+    #region state-fields
+    private float cameraOffset = 0f;
+    private bool shouldFlapWings = false;
+    private bool alive = true;
+    private int score = 0;
+    private List<Action> OnDieListeners = new List<Action>();
+    #endregion
+
+
+
+
+   
 
 #endregion
 
@@ -231,13 +238,21 @@ public class Bird : MonoBehaviour
 #region testing code
 #if TESTING_MODE
                     if (Invincible) return;
+        ReporterTest.report("Die-method : onDieListener-count = {0}", OnDieListeners.Count);
 #endif
 #endregion
             alive = false;
             AnimatorUtil.GetInst().Dead();
             AudioController.GetInstance().PlayDead();
             theRigidbody.constraints = RigidbodyConstraints2D.None;
-        }
+#if TESTING_MODE
+        int count = 0;
+        foreach (Action action in OnDieListeners) { action(); count++; }
+        ReporterTest.report("{0} action(s) were run",count);
+#else
+        foreach (Action action in OnDieListeners) action();
+#endif
+    }
         private void ScorePoint()
         {
             score++;
@@ -255,11 +270,11 @@ public class Bird : MonoBehaviour
             Camera.main.transform.position = tmp;
         }
 
-    #endregion
+#endregion
 
-    #region public methods/Properties
+#region public methods/Properties
     public int GetCurrentScore() { return score; }
-    #region Suspend-movement
+#region Suspend-movement
     private bool _SuspednMovement_value = false;
     private RigidbodyConstraints2D _SuspendMovement_savedRBC = RigidbodyConstraints2D.None;
     public bool SuspendMovement
@@ -287,9 +302,17 @@ public class Bird : MonoBehaviour
             }
         }
     }
-    #endregion
+    public void AddOnDieListener(Action action)
+    {
+#if TESTING_MODE
+        ReporterTest.report("adding-ondielistener");
+#endif
+        if (action == null) return;
+        OnDieListeners.Add(action);
+    }
+#endregion
 
-    #endregion
+#endregion
 
     void Awake()
     {
@@ -313,14 +336,14 @@ public class Bird : MonoBehaviour
   
     void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.tag == GateTag) ScorePoint();
+        if (alive && collider.tag == GateTag) ScorePoint();
     }
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (alive && (collision.collider.tag == PipeTag || collision.collider.tag == GroundTag)) Die();
     }
 
-    #region Testing Code
+#region Testing Code
 #if TESTING_MODE
     private class ReporterTest
     {
@@ -342,7 +365,7 @@ public class Bird : MonoBehaviour
         return AnimatorUtil.GetInst().GetAnimator();
     }
     public Rigidbody2D Testing_GetRigidbody() { return theRigidbody; }
-    public bool Invincible = true;
+    public bool Invincible = false;
     public static void Testing_ERASE()
     {
         Destroy(instance.gameObject);

@@ -35,6 +35,7 @@ public class GamePlayManager : MonoBehaviour
             case 'G': Instantiate(brdBox.GreenBird, startingPosition, new Quaternion()); break;
             case 'B': Instantiate(brdBox.BlueBird, startingPosition, new Quaternion()); break;
         }
+        Bird.instance.AddOnDieListener(RunGameOver);
         StartCoroutine(WaitToFinishFadin());
     }
 
@@ -85,6 +86,16 @@ public class GamePlayManager : MonoBehaviour
     private void ReportNewHighScore()
     {
         GameController.GPPort.SetHighScore(highScore);
+    }
+    private void RunGameOver()
+    {
+        UpdateHighScore();
+        ReportNewHighScore();
+        var pausePanel = PausePanelController.instance;
+        pausePanel.Mode = PausePanelController.MODE.GAMEOVER;
+        pausePanel.SetScore(Bird.instance.GetCurrentScore());
+        pausePanel.SetHighScore(highScore);
+        pausePanel.PanelTurnedOn = true;
     }
 
     void Start()
