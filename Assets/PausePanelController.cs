@@ -10,6 +10,121 @@ public class PausePanelController : MonoBehaviour
     private const string ShowInstLabel = "show\ninstructions";
     private const string HideInstLabel = "hide\ninstructions";
 
+
+    /* Use this helper-class to constain and manage fields which be visible ONLY in game-over mode
+     * Items should be of type  : Image or Text
+     * **/
+    private class GameOverItemHolder
+    {
+        private enum ItemType { IMAGE , TEXT , NA }
+        private ItemType GetItemType(object x)
+        {
+            if (x == null) return ItemType.NA;
+            Type t = x.GetType();
+            if (t == typeof(Image))
+                return ItemType.IMAGE;
+            else if (t == typeof(Text))
+                return ItemType.TEXT;
+            else
+                return ItemType.NA;
+        }
+        private struct ColorItem
+        {
+            private object data;
+            private Action<object, Color> setter;
+            private Func<object, Color> getter;
+            public Color TheColor
+            {
+                get { return getter(data); }
+                set { setter(data, value); }
+            }
+            public ColorItem(object d, Action<object, Color> s, Func<object, Color> g)
+            {
+                data = d;
+                setter = s;
+                getter = g;
+            }
+        }
+        private class Item
+        {
+            private ColorItem? data = null;
+            public bool GetVisible()
+            {
+                if (!data.HasValue) return false;
+                return data.Value.TheColor.a != 0f;
+            }
+            public void SetVisible(bool value)
+            {
+                if (!data.HasValue) return;
+                var colorItem = data.Value;
+                var tmp = colorItem.TheColor;
+                tmp.a = value ? 1f : 0f;
+                colorItem.TheColor = tmp;
+            }
+            public Item(ColorItem d) { data = d; }
+        }
+
+        private Color ImgColorGetter(object data)
+        {
+            var tmp = (Image)data;
+            return tmp.color;
+        }
+        private void ImgColorSetter(object data, Color color)
+        {
+            var tmp = (Image)data;
+            tmp.color = color;
+        }
+        private Color TxtColorGetter(object data)
+        {
+            var tmp = (Text)data;
+            return tmp.color;
+        }
+        private void TxtColorSetter(object data, Color color)
+        {
+            var tmp = (Text)data;
+            tmp.color = color;
+        }
+
+        private Item ToItem(object obj)
+        {
+            ColorItem? ci = null;
+            ItemType itemType = GetItemType(obj);
+            switch (itemType)
+            {
+                case ItemType.IMAGE: ci = new ColorItem(obj,ImgColorSetter,ImgColorGetter); break;
+                case ItemType.TEXT: ci = new ColorItem(obj, TxtColorSetter, TxtColorGetter); break;
+            }
+            if (ci.HasValue) return new Item(ci.Value);
+            return null;
+        }
+
+        private bool visible = false;
+
+        private List<Item> items = new List<Item>();
+
+        public void AddItem(object obj)
+        {
+            var item = ToItem(obj);
+            if (item == null) return;
+            item.SetVisible(visible);
+            items.Add(item);
+        }
+
+        public bool Visible
+        {
+            get { return visible; }
+            set
+            {
+                if (value != visible)
+                {
+                    visible = value;
+                    foreach (Item item in items) item.SetVisible(visible);
+                }
+            }
+        }
+
+    }
+
     private enum Medal
     {
         WHITE = FlappyBirdUtil.Flags.Medals.White,
@@ -34,6 +149,9 @@ public class PausePanelController : MonoBehaviour
     #endregion
 
     private SpriteResource.MedalSpriteSet? medalSprites = null;
+    private GameOverItemHolder gameOverItems = new GameOverItemHolder();
+    
+
 
     #region button-handlers
     private void PlayButtonHandler()
@@ -70,19 +188,25 @@ public class PausePanelController : MonoBehaviour
     {
         Debug.Log("pause-panel-setup : " + count++);
         instance = this;
+        gameOverItems.Visible = currentMode == MODE.GAMEOVER;
         var texts = GetComponentsInChildren<Text>();
         foreach (var txt in texts)
             switch (txt.name)
             {
                 case FlappyBirdUtil.Names.PausePanelFields.ScoreTxtDisplay:scoreDisplay = txt; break;
                 case FlappyBirdUtil.Names.PausePanelFields.HighScoreTxtDisplay: highScoreDisplay = txt; break;
-                case FlappyBirdUtil.Names.PausePanelFields.GameOverTxt: gameOverDisplay = txt; MainTainGameOverVisible(); break;
+                //case FlappyBirdUtil.Names.PausePanelFields.GameOverTxt: gameOverDisplay = txt; MainTainGameOverVisible(); break;
+                case FlappyBirdUtil.Names.PausePanelFields.GameOverTxt:
+                    gameOverDisplay = txt;
+                    gameOverItems.AddItem(gameOverDisplay);
+                    break;
+                case FlappyBirdUtil.Names.PausePanelFields.MedalTxtLabel: gameOverItems.AddItem(txt); break;
             }
         var images = GetComponentsInChildren<Image>();
         foreach (var img in images)
             switch (img.name)
             {
-                case FlappyBirdUtil.Names.PausePanelFields.MedalImageDisplay:medalDisplay = img; break;
+                case FlappyBirdUtil.Names.PausePanelFields.MedalImageDisplay:medalDisplay = img; gameOverItems.AddItem(medalDisplay); break;
                 case FlappyBirdUtil.Names.PausePanelFields.InstructionsImage:instructionsDisplay = img; break;
             }
         var buttons = GetComponentsInChildren<Button>();
@@ -148,16 +272,23 @@ public class PausePanelController : MonoBehaviour
     private MODE currentMode = MODE.PAUSED;
     
     private void MainTainGameOverVisible()
-    {
+    {/*
         if (gameOverDisplay == null) return;
         Color tmp = gameOverDisplay.color;
         tmp.a = (currentMode==MODE.GAMEOVER) ? 1f : 0f;
         gameOverDisplay.color = tmp;
+        */
+        gameOverItems.Visible = currentMode == MODE.GAMEOVER;
     }
     public MODE Mode
     {
         get { return currentMode; }
-        set { currentMode = value; MainTainGameOverVisible(); }
+        set
+        {
+            currentMode = value;
+            MainTainGameOverVisible();
+            
+        }
     }
 
 
