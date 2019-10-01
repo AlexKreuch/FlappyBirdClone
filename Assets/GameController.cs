@@ -164,6 +164,12 @@ public class GameController : MonoBehaviour
         public static char GetCurrentBird() { return instance.CurrentBird; }
         public static int GetHighScore() { return instance.HighScore; }
         public static void SetHighScore(int newHighScore) { instance.HighScore = newHighScore; }
+        public static void UnlockNextBird()
+        {
+            if (!instance.BlueUnlocked) { instance.BlueUnlocked = true; return; }
+            if (!instance.RedUnlocked) { instance.RedUnlocked = true; return; }
+            if (!instance.GreenUnlocked) { instance.GreenUnlocked = true; return; }
+        }
     }
 }
 

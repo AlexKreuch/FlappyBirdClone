@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿#define BIRDIN_TESTING_MODE
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -46,6 +47,14 @@ public class HELPER003 : MonoBehaviour
         }
         public static Builder MakeBuilder() { return new Builder(); }
     }
+    private void BtnMech(ref bool btn, Action action)
+    {
+        if (btn)
+        {
+            btn = false;
+            action();
+        }
+    }
 
     public string joystick = "";
     private KeySystem joystickMech = null;
@@ -53,12 +62,25 @@ public class HELPER003 : MonoBehaviour
     {
         if (joystickMech == null)
         {
+            #region conditionally define testing-mode 'invincible-toggle'
+#if BIRDIN_TESTING_MODE
+            void ToggleInvincible()
+            {
+                bool tmp = Bird.instance.Invincible;
+                tmp = !tmp;
+                Bird.instance.Invincible = tmp;
+                flag = tmp ? "TRUE" : "FALSE";
+            }
+#else
+            void ToggleInvincible(){}
+#endif
+            #endregion
             float scaler = 1f;
             Vector3 UP = new Vector3(0f, 1f, 0f);
             Vector3 DOWN = new Vector3(0f, -1f, 0f);
             Vector3 LEFT = new Vector3(-1f, 0f, 0f);
             Vector3 RIGHT = new Vector3(1f, 1f, 0f);
-
+            
             Action mkAct(Vector3 vec)
             {
                 vec *= scaler;
@@ -76,7 +98,8 @@ public class HELPER003 : MonoBehaviour
                 .AddKeyAction('j', mkAct(LEFT))
                 .AddKeyAction('l', mkAct(RIGHT))
                 .AddKeyAction(' ', Flap)
-                .AddKeyAction('p',TogglePause)
+                .AddKeyAction('p', PressPause)
+                .AddKeyAction('8',ToggleInvincible)
                 .Build();
         }
         return joystickMech;
@@ -87,7 +110,7 @@ public class HELPER003 : MonoBehaviour
     }
 
 
-    private Button flpBtn = null;
+    private Button flpBtn = null, pauseBtn = null, playBtn;
     private Button GetFlpBtn()
     {
         if (flpBtn == null)
@@ -97,6 +120,32 @@ public class HELPER003 : MonoBehaviour
         }
         return flpBtn;
     }
+    private Button GetPauseBtn()
+    {
+        if (pauseBtn == null)
+        {
+            var lst = GameObject.FindGameObjectsWithTag(FlappyBirdUtil.Tags.PauseButtonTag);
+            if (lst.Length != 0) pauseBtn = lst[0].GetComponent<Button>();
+        }
+        return pauseBtn;
+    }
+    private Button GetPlayBtn()
+    {
+        if (playBtn == null)
+        {
+            var btns = FindObjectsOfType<Button>();
+            foreach (var btn in btns)
+            {
+                if (btn.name == FlappyBirdUtil.Names.PausePanelFields.PlayBtn)
+                {
+                    playBtn = btn;
+                    break;
+                }
+            }
+        }
+        return playBtn;
+    }
+    private bool IsPauseed() { return PausePanelController.instance.PanelTurnedOn; }
 
     private void Flap()
     {
@@ -104,6 +153,18 @@ public class HELPER003 : MonoBehaviour
         if (btn == null) return;
         btn.onClick.Invoke();
     }
+    private void PressPause()
+    {
+        if (IsPauseed())
+        {
+            GetPlayBtn().onClick.Invoke();
+        }
+        else
+        {
+            GetPauseBtn().onClick.Invoke();
+        }
+    }
+
 
     void Update()
     {
@@ -111,24 +172,7 @@ public class HELPER003 : MonoBehaviour
         MaintainScale();
     }
 
-    private void TogglePause()
-    {
-        if (!Application.isPlaying) return;
-        if (Time.timeScale == 0f)
-        {
-            PausePanelController.instance.PanelTurnedOn = false;
-            Time.timeScale = 1f;
-        }
-        else
-        {
-            PausePanelController.instance.SetHighScore(100);
-            PausePanelController.instance.SetScore(10);
-          //  PausePanelController.instance.SetMedal(FlappyBirdUtil.Flags.Medals.White);
-            PausePanelController.instance.SetMedal(-1);
-            PausePanelController.instance.PanelTurnedOn = true;
-            Time.timeScale = 0f;
-        }
-    }
+    
 
     public GameObject ScaleThis = null;
     private class ScaleMech
@@ -178,4 +222,7 @@ public class HELPER003 : MonoBehaviour
             ScaleMech.Size = tmp;
         }
     }
+
+
+    public string flag = "???";
 }

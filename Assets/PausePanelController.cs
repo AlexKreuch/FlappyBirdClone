@@ -191,7 +191,7 @@ public class PausePanelController : MonoBehaviour
         gameOverItems.Visible = currentMode == MODE.GAMEOVER;
         var texts = GetComponentsInChildren<Text>();
         foreach (var txt in texts)
-            switch (txt.name)
+            switch (txt.name)s
             {
                 case FlappyBirdUtil.Names.PausePanelFields.ScoreTxtDisplay:scoreDisplay = txt; break;
                 case FlappyBirdUtil.Names.PausePanelFields.HighScoreTxtDisplay: highScoreDisplay = txt; break;

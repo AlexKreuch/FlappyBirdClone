@@ -22,13 +22,13 @@ public class GamePlayManager : MonoBehaviour
         highScore = GameController.GPPort.GetHighScore();
         char brd = GameController.GPPort.GetCurrentBird();
         var brdBox = Resources.Load<BirdResource>(FlappyBirdUtil.ResourcePaths.BirdRec);
-#if TESTING_MODE
-        brd = 'G';
-#endif
-#if (USING_INITIAL_BIRD && BIRD_IN_TESTING_MODE)
-        Debug.Log(string.Format("~~ destroying initial-bird : {0}",Bird.instance.gameObject.name));
-        Bird.Testing_ERASE();
-#endif
+        #if TESTING_MODE
+            brd = 'G';
+        #endif
+        #if (USING_INITIAL_BIRD && BIRD_IN_TESTING_MODE)
+            Debug.Log(string.Format("~~ destroying initial-bird : {0}",Bird.instance.gameObject.name));
+            Bird.Testing_ERASE();
+        #endif
         switch (brd)
         {
             case 'R': Instantiate(brdBox.RedBird, startingPosition, new Quaternion()); break;
@@ -87,6 +87,24 @@ public class GamePlayManager : MonoBehaviour
     {
         GameController.GPPort.SetHighScore(highScore);
     }
+    private void EvaluateFinalScore()
+    {
+        /*
+             RULES : 
+                ->  if     score<=10 : medal==white
+                    elsif  score<=20 : medal==orange
+                    else             : medal==gold   && unlock-next-bird
+
+         */
+        float score = Bird.instance.GetCurrentScore();
+        if (score <= 10) PausePanelController.instance.SetMedal(FlappyBirdUtil.Flags.Medals.White);
+        else if (score <= 20) PausePanelController.instance.SetMedal(FlappyBirdUtil.Flags.Medals.Orange);
+        else
+        {
+            PausePanelController.instance.SetMedal(FlappyBirdUtil.Flags.Medals.Gold);
+            GameController.GPPort.UnlockNextBird();
+        }
+    }
     private void RunGameOver()
     {
         UpdateHighScore();
@@ -95,6 +113,7 @@ public class GamePlayManager : MonoBehaviour
         pausePanel.Mode = PausePanelController.MODE.GAMEOVER;
         pausePanel.SetScore(Bird.instance.GetCurrentScore());
         pausePanel.SetHighScore(highScore);
+        EvaluateFinalScore();
         pausePanel.PanelTurnedOn = true;
     }
 
@@ -104,4 +123,5 @@ public class GamePlayManager : MonoBehaviour
         SetUp();
 
     }
+
 }
