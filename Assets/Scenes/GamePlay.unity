@@ -326,7 +326,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &92181783
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2084,6 +2084,11 @@ PrefabInstance:
     - target: {fileID: 163623496810342187, guid: 5273032a07cf6c74e9f4ac883d65cc6e,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 163623496810342185, guid: 5273032a07cf6c74e9f4ac883d65cc6e,
+        type: 3}
+      propertyPath: m_SortingOrder
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1705913157, guid: 5273032a07cf6c74e9f4ac883d65cc6e, type: 3}
@@ -4391,6 +4396,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   joystick: 
   ScaleThis: {fileID: 783184606}
+  flag: ???
 --- !u!4 &1707176738
 Transform:
   m_ObjectHideFlags: 0

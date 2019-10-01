@@ -113,6 +113,11 @@ public class FlappyBirdUtil : MonoBehaviour
         public static string PauseButtonTag = "PauseButton";
     }
 
+    public class SortingOrders
+    {
+        public const int PlayerOrder = 1;
+    }
+
     public const float FadeTime = 1f;
 
 }

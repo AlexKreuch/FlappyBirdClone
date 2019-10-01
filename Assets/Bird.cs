@@ -341,6 +341,10 @@ public class Bird : MonoBehaviour
             SetUpAudioController();
             SetUpAnimatorUtil();
             ComputeCameraOffset();
+            gameObject.GetComponent<SpriteRenderer>().sortingOrder = FlappyBirdUtil.SortingOrders.PlayerOrder;
+            #if TESTING_MODE
+                SetInvincibleToDefault();
+            #endif
         }
 
         void Update()
@@ -388,6 +392,9 @@ public class Bird : MonoBehaviour
             Destroy(instance.gameObject);
             instance = null;
         }
+
+        private bool invincible_default = false;
+        private void SetInvincibleToDefault() { Invincible = invincible_default; }
     #endif
     #endregion
 
