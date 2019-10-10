@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using GooglePlayGames;
 
 
 [ExecuteAlways]
@@ -63,7 +64,8 @@ public class Helper001 : MonoBehaviour
         if (!flag) Debug.Log("fader was busy");
     }
 
- 
+    
+    
 
-   
+
 }
