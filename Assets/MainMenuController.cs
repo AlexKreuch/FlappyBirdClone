@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿#define TESTING_GOOGLE_PLAY
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -37,6 +38,8 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
+   
+
     #region Button-Handlers
     private void GamesButtonHandler() {  }
     private void PlayButtonHandler()
@@ -46,8 +49,14 @@ public class MainMenuController : MonoBehaviour
     }
     private void RankButtonHandler() { }
     private void ShareButtonHandler() {  }
-    private void TwitterButtonHandler() {  }
-    #endregion
+    private void TwitterButtonHandler()
+    {
+        #if TESTING_GOOGLE_PLAY
+            string nm = "TestScene02";
+            SceneFader.instance.StartFading(FlappyBirdUtil.FadeTime,nm);
+        #endif
+    }
+#endregion
      
 
 
