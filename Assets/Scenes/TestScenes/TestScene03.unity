@@ -149,8 +149,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 112df2057d3d3a749a940b3ece616a5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  input: SystemInfo
+  input: 
   enter: 0
+  MultiMode: 0
 --- !u!4 &1032988759
 Transform:
   m_ObjectHideFlags: 0
