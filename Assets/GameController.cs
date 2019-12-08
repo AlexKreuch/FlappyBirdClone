@@ -99,6 +99,7 @@ public class GameController : MonoBehaviour
             PlayerPrefs.SetInt(CURRENTBIRD,flag);
         }
     }
+    private string BirdUnlockOrder { get { return "RBG"; } }
     #endregion
 
     #region public-methods
@@ -179,13 +180,34 @@ public class GameController : MonoBehaviour
         }
         public static void OVERRIDE_UNLOCKED_BIRDS(bool red, bool green, bool blue)
         {
-            GameController.instance.RedUnlocked = red;
-            GameController.instance.GreenUnlocked = green;
-            GameController.instance.BlueUnlocked = blue;
+            #region implimentation-1
+            /** 
+             * less efficient. Should work as even if implementations of private properties are changed
+             */
+            /*
+           GameController.instance.RedUnlocked = red;
+           GameController.instance.GreenUnlocked = green;
+           GameController.instance.BlueUnlocked = blue;
+           GameController.instance.Initialized = true;
+            */
+            #endregion
+
+            #region implimentation-2
+            /** 
+             * more efficient. May cease to work if implementations of private properties are changed
+             */
+            int tmp = 0;
+            if (red) tmp += REDFLAG;
+            if (blue) tmp += BLUEFLAG;
+            if (green) tmp += GREENFLAG;
+            PlayerPrefs.SetInt(UNLOCKEDBIRDS,tmp);
+            PlayerPrefs.SetInt(INITIALIZED,1);
+            #endregion
         }
         public static void OVERRIDE_BIRD_SELECTION(char brd)
         {
             GameController.instance.CurrentBird = brd;
+            GameController.instance.Initialized = true;
         }
         public static bool CHECK_VALID()
         {
@@ -216,7 +238,7 @@ public class GameController : MonoBehaviour
             Debug.Assert(vals != null && vals.Length >= 6, "input must be non-null and have size>=6");
             #region implimentation-1
             /** 
-             * less efficient. Should work as long as implementations of private properties remain unchanged
+             * less efficient. Should work as even if implementations of private properties are changed
              */
             /*
            var gci = GameController.instance;
