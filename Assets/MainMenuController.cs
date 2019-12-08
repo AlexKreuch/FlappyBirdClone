@@ -34,6 +34,7 @@ public class MainMenuController : MonoBehaviour
                 case FlappyBirdUtil.Tags.MenuButtons.Rank: button.onClick.AddListener(RankButtonHandler); break;
                 case FlappyBirdUtil.Tags.MenuButtons.Share: button.onClick.AddListener(ShareButtonHandler); break;
                 case FlappyBirdUtil.Tags.MenuButtons.Twitter: button.onClick.AddListener(TwitterButtonHandler); break;
+                case FlappyBirdUtil.Tags.MenuButtons.Settings: button.onClick.AddListener(SettingsButtonHandler); break;
             }
         }
     }
@@ -41,22 +42,23 @@ public class MainMenuController : MonoBehaviour
    
 
     #region Button-Handlers
-    private void GamesButtonHandler() {  }
-    private void PlayButtonHandler()
-    {
-        SaveBirdChoice();
-        SceneFader.instance.StartFading(FlappyBirdUtil.FadeTime,FlappyBirdUtil.Names.GamePlayScene);
-    }
-    private void RankButtonHandler() { }
-    private void ShareButtonHandler() {  }
-    private void TwitterButtonHandler()
-    {
-        #if TESTING_GOOGLE_PLAY
-            string nm = "TestScene02";
-            SceneFader.instance.StartFading(FlappyBirdUtil.FadeTime,nm);
-        #endif
-    }
-#endregion
+        private void GamesButtonHandler() {  }
+        private void PlayButtonHandler()
+        {
+            SaveBirdChoice();
+            SceneFader.instance.StartFading(FlappyBirdUtil.FadeTime,FlappyBirdUtil.Names.GamePlayScene);
+        }
+        private void RankButtonHandler() { }
+        private void ShareButtonHandler() {  }
+        private void TwitterButtonHandler()
+        {
+            #if TESTING_GOOGLE_PLAY
+                string nm = "TestScene02";
+                SceneFader.instance.StartFading(FlappyBirdUtil.FadeTime,nm);
+            #endif
+        }
+        private void SettingsButtonHandler() { }
+    #endregion
      
 
 

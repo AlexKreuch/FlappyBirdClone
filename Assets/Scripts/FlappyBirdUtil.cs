@@ -108,6 +108,7 @@ public class FlappyBirdUtil : MonoBehaviour
             public const string Selector = "BirdSelectorButton";
             public const string Twitter = "TwitterButton";
             public const string Share = "ShareButton";
+            public const string Settings = "SettingsButton";
         }
         public static string FlapButtonTag = "FlapButton";
         public static string PauseButtonTag = "PauseButton";

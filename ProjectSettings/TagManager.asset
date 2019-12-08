@@ -18,6 +18,7 @@ TagManager:
   - TwitterButton
   - ShareButton
   - PauseButton
+  - SettingsButton
   layers:
   - Default
   - TransparentFX
