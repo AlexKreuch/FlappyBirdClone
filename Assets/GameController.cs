@@ -171,5 +171,78 @@ public class GameController : MonoBehaviour
             if (!instance.GreenUnlocked) { instance.GreenUnlocked = true; return; }
         }
     }
+    public class SPPort // SP := SettingsPage
+    {
+        public static void ResetAll()
+        {
+            PlayerPrefs.DeleteAll();
+        }
+        public static void OVERRIDE_UNLOCKED_BIRDS(bool red, bool green, bool blue)
+        {
+            GameController.instance.RedUnlocked = red;
+            GameController.instance.GreenUnlocked = green;
+            GameController.instance.BlueUnlocked = blue;
+        }
+        public static void OVERRIDE_BIRD_SELECTION(char brd)
+        {
+            GameController.instance.CurrentBird = brd;
+        }
+        public static bool CHECK_VALID()
+        {
+            var gci = GameController.instance;
+            char brd = gci.CurrentBird;
+            switch(brd)
+            {
+                case 'R': return gci.RedUnlocked;
+                case 'B': return gci.BlueUnlocked;
+                case 'G': return gci.GreenUnlocked;
+            }
+            return false;
+        }
+        public static void GetData(int[] vals)
+        {
+            /**
+             * note : vals must be non-null and have at least 6 spaces.
+             *        vals will be populated by the return-data
+             *  key : 
+             *     vals[0] := HighScore
+             *     vals[1] := CurrentBird ( encoded as char cast to int )
+             *     vals[2] := Initialized ( encoded as 1:=True and 0:=False )
+             *     vals[3] := RedUnlocked ( encoded as 1:=True and 0:=False )
+             *     vals[4] := GreenUnlocked ( encoded as 1:=True and 0:=False )
+             *     vals[5] := BlueUnlocked ( encoded as 1:=True and 0:=False )
+             *     
+             */
+            Debug.Assert(vals != null && vals.Length >= 6, "input must be non-null and have size>=6");
+            #region implimentation-1
+            /** 
+             * less efficient. Should work as long as implementations of private properties remain unchanged
+             */
+            /*
+           var gci = GameController.instance;
+           vals[0] = gci.HighScore;
+           vals[1] = (int)gci.CurrentBird;
+           vals[2] = gci.Initialized ? 1 : 0;
+           vals[3] = gci.RedUnlocked ? 1 : 0;
+           vals[4] = gci.GreenUnlocked ? 1 : 0;
+           vals[5] = gci.BlueUnlocked ? 1 : 0;
+           */
+            #endregion
+            #region implimentation-2
+            /** 
+             * more efficient. May cease to work if implementations of private properties are changed
+             */
+            var gci = GameController.instance;
+            vals[0] = gci.HighScore;
+            vals[1] = (int)gci.CurrentBird;
+            vals[2] = PlayerPrefs.GetInt(INITIALIZED, 0);
+            int tmp = PlayerPrefs.GetInt(UNLOCKEDBIRDS, 0);
+            vals[3] = (tmp / REDFLAG) % 2;
+            vals[4] = (tmp / GREENFLAG) % 2;
+            vals[5] = (tmp / BLUEFLAG) % 2;
+
+            #endregion
+        }
+    }
 }
 

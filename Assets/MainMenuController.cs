@@ -57,7 +57,11 @@ public class MainMenuController : MonoBehaviour
                 SceneFader.instance.StartFading(FlappyBirdUtil.FadeTime,nm);
             #endif
         }
-        private void SettingsButtonHandler() { }
+        private void SettingsButtonHandler()
+        {
+            SaveBirdChoice();
+            SceneFader.instance.StartFading(FlappyBirdUtil.FadeTime,FlappyBirdUtil.Names.SettingsScene);
+        }
     #endregion
      
 

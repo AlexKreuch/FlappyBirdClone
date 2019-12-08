@@ -76,6 +76,7 @@ public class FlappyBirdUtil : MonoBehaviour
     {
         public const string GamePlayScene = "GamePlay";
         public const string MainMenuScene = "MainMenu";
+        public const string SettingsScene = "Settings";
         public class PausePanelFields
         {
             public const string MedalTxtLabel = "Label_Medal";
