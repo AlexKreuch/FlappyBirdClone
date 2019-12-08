@@ -209,22 +209,41 @@ public class GameController : MonoBehaviour
             GameController.instance.CurrentBird = brd;
             GameController.instance.Initialized = true;
         }
-        public static bool CHECK_VALID()
+       
+       
+        private static int EncodeBirdOrder()
         {
-            var gci = GameController.instance;
-            char brd = gci.CurrentBird;
-            switch(brd)
+            /* Encode the unlockOrder as an int
+             *        unlock order-key : 
+             *           if a string s0:='***' is the unlock-order, then form a new string s1
+             *           by replaceing 'R' with '1', 'G' with '2', and 'B' with 3.
+             *           Parse s1 into a base-10 integer n0, and return the result.
+             */
+
+            string uo = instance.BirdUnlockOrder;
+
+            // for efficiency
+            if (uo == "RBG") return 132;
+
+            int res = 0, pow = 1, tmp = 0;
+            for (int i = 2; i >= 0; i--)
             {
-                case 'R': return gci.RedUnlocked;
-                case 'B': return gci.BlueUnlocked;
-                case 'G': return gci.GreenUnlocked;
+                switch (uo[i])
+                {
+                    case 'R': tmp = 1; break;
+                    case 'G': tmp = 2; break;
+                    case 'B': tmp = 3; break;
+                }
+                res += pow * tmp;
+                pow *= 10;
             }
-            return false;
+
+            return res;
         }
         public static void GetData(int[] vals)
         {
             /**
-             * note : vals must be non-null and have at least 6 spaces.
+             * note : vals must be non-null and have at least 7 spaces.
              *        vals will be populated by the return-data
              *  key : 
              *     vals[0] := HighScore
@@ -233,14 +252,15 @@ public class GameController : MonoBehaviour
              *     vals[3] := RedUnlocked ( encoded as 1:=True and 0:=False )
              *     vals[4] := GreenUnlocked ( encoded as 1:=True and 0:=False )
              *     vals[5] := BlueUnlocked ( encoded as 1:=True and 0:=False )
+             *     vals[6] := UnlockOrder  ( encoded as described in 'EncodeBirdOrder' above ) 
              *     
              */
-            Debug.Assert(vals != null && vals.Length >= 6, "input must be non-null and have size>=6");
+            Debug.Assert(vals != null && vals.Length >= 7, "input must be non-null and have size>=7");
             #region implimentation-1
             /** 
              * less efficient. Should work as even if implementations of private properties are changed
              */
-            /*
+           /*
            var gci = GameController.instance;
            vals[0] = gci.HighScore;
            vals[1] = (int)gci.CurrentBird;
@@ -248,11 +268,13 @@ public class GameController : MonoBehaviour
            vals[3] = gci.RedUnlocked ? 1 : 0;
            vals[4] = gci.GreenUnlocked ? 1 : 0;
            vals[5] = gci.BlueUnlocked ? 1 : 0;
-           */
+           vals[6] = EncodeBirdOrder();
+            */
             #endregion
             #region implimentation-2
             /** 
              * more efficient. May cease to work if implementations of private properties are changed
+             * Note that birdOrder is hardcoded, so this MUST be addressed if the value is changed later
              */
             var gci = GameController.instance;
             vals[0] = gci.HighScore;
@@ -262,7 +284,7 @@ public class GameController : MonoBehaviour
             vals[3] = (tmp / REDFLAG) % 2;
             vals[4] = (tmp / GREENFLAG) % 2;
             vals[5] = (tmp / BLUEFLAG) % 2;
-
+            vals[6] = EncodeBirdOrder();
             #endregion
         }
     }
