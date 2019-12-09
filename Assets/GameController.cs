@@ -1,6 +1,7 @@
 ﻿#define TESTING_MODE
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 #if TESTING_MODE
@@ -116,16 +117,23 @@ public class GameController : MonoBehaviour
 
         HighScore = 0;
 
-        BlueUnlocked = true;
-        RedUnlocked = true;
+        BlueUnlocked = false;
+        RedUnlocked = false;
         GreenUnlocked = false;
 
-        CurrentBird = 'R';
+        char brd = BirdUnlockOrder[0];
+
+        CurrentBird = brd;
+
+        switch (brd)
+        {
+            case 'R': RedUnlocked = true; break;
+            case 'G': GreenUnlocked = true; break;
+            case 'B': BlueUnlocked = true; break;
+        }
 
         Initialized = true;
     }
-
-
     private bool _getBirdUnlocked(int birdFlag)
         {
             int tmp = PlayerPrefs.GetInt(UNLOCKEDBIRDS, 0);
@@ -139,7 +147,15 @@ public class GameController : MonoBehaviour
         else tmp = tmp & (~birdFlag);
         PlayerPrefs.SetInt(UNLOCKEDBIRDS, tmp);
     }
-   
+
+    private bool BirdChoiceValid()
+    {
+        int brd = PlayerPrefs.GetInt(CURRENTBIRD,DEFAULTBIRDFLAG);
+        int unl = PlayerPrefs.GetInt(UNLOCKEDBIRDS, 0);
+
+        return (brd&unl)!=0;
+    }
+
     #endregion
 
 
@@ -165,11 +181,44 @@ public class GameController : MonoBehaviour
         public static char GetCurrentBird() { return instance.CurrentBird; }
         public static int GetHighScore() { return instance.HighScore; }
         public static void SetHighScore(int newHighScore) { instance.HighScore = newHighScore; }
-        public static void UnlockNextBird()
+        private static bool _getUnl(char brd)
         {
+            switch (brd)
+            {
+                case 'R': return instance.RedUnlocked;
+                case 'G': return instance.GreenUnlocked;
+                case 'B': return instance.BlueUnlocked;
+            }
+            return false;
+        }
+        private static void _setUnl(char brd, bool val)
+        {
+            switch (brd)
+            {
+                case 'R': instance.RedUnlocked = val; break;
+                case 'G': instance.GreenUnlocked = val; break;
+                case 'B': instance.BlueUnlocked = val; break;
+            }
+        }
+        public static void UnlockNextBird( Action<char> callback = null )
+        {
+            string uo = instance.BirdUnlockOrder;
+            for (int i = 0; i < uo.Length; i++)
+            {
+                char brd = uo[i];
+                if (!_getUnl(brd))
+                {
+                    _setUnl(brd,true);
+                    if (callback != null) callback(brd);
+                    return;
+                }
+            }
+            if (callback != null) callback('N');
+            /*
             if (!instance.BlueUnlocked) { instance.BlueUnlocked = true; return; }
             if (!instance.RedUnlocked) { instance.RedUnlocked = true; return; }
             if (!instance.GreenUnlocked) { instance.GreenUnlocked = true; return; }
+            */
         }
     }
     public class SPPort // SP := SettingsPage
@@ -177,39 +226,27 @@ public class GameController : MonoBehaviour
         public static void ResetAll()
         {
             PlayerPrefs.DeleteAll();
+            instance.InitialSetup();
         }
-        public static void OVERRIDE_UNLOCKED_BIRDS(bool red, bool green, bool blue)
+        public static void OVERRIDE_UNLOCKED_BIRDS(int birdCount)
         {
-            #region implimentation-1
-            /** 
-             * less efficient. Should work as even if implementations of private properties are changed
-             */
-            /*
-           GameController.instance.RedUnlocked = red;
-           GameController.instance.GreenUnlocked = green;
-           GameController.instance.BlueUnlocked = blue;
-           GameController.instance.Initialized = true;
-            */
-            #endregion
-
-            #region implimentation-2
-            /** 
-             * more efficient. May cease to work if implementations of private properties are changed
-             */
-            int tmp = 0;
-            if (red) tmp += REDFLAG;
-            if (blue) tmp += BLUEFLAG;
-            if (green) tmp += GREENFLAG;
-            PlayerPrefs.SetInt(UNLOCKEDBIRDS,tmp);
-            PlayerPrefs.SetInt(INITIALIZED,1);
-            #endregion
+            // birdCount is the number of birds to be unlocked
+            if (birdCount < 1) birdCount = 1;
+            if (birdCount > 3) birdCount = 3;
+            string uo = instance.BirdUnlockOrder;
+            for (int i = 0; i < 3; i++)
+            {
+                switch (uo[i])
+                {
+                    case 'R': instance.RedUnlocked = i < birdCount; break;
+                    case 'G': instance.GreenUnlocked = i < birdCount; break;
+                    case 'B': instance.BlueUnlocked = i < birdCount; break;
+                }
+            }
+            if (!instance.BirdChoiceValid()) instance.CurrentBird = uo[0];
+            instance.Initialized = true;
         }
-        public static void OVERRIDE_BIRD_SELECTION(char brd)
-        {
-            GameController.instance.CurrentBird = brd;
-            GameController.instance.Initialized = true;
-        }
-       
+        
        
         private static int EncodeBirdOrder()
         {

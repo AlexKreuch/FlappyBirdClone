@@ -111,8 +111,15 @@ public class FlappyBirdUtil : MonoBehaviour
             public const string Share = "ShareButton";
             public const string Settings = "SettingsButton";
         }
-        public static string FlapButtonTag = "FlapButton";
-        public static string PauseButtonTag = "PauseButton";
+        public class SettingsPageFields
+        {
+            public const string MainMenu = "MainMenuButton";
+            public const string HighScore = "HighScoreDisplay";
+        }
+        public const string FlapButtonTag = "FlapButton";
+        public const string PauseButtonTag = "PauseButton";
+        public const string UnlockControl = "UnlockedBirdSetting";
+        public const string ResetButton = "ResetAll";
     }
 
     public class SortingOrders

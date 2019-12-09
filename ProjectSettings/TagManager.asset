@@ -19,6 +19,10 @@ TagManager:
   - ShareButton
   - PauseButton
   - SettingsButton
+  - MainMenuButton
+  - HighScoreDisplay
+  - UnlockedBirdSetting
+  - ResetAll
   layers:
   - Default
   - TransparentFX
