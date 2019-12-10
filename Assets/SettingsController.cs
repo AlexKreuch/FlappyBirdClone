@@ -32,11 +32,11 @@ Reset (button)
     }
 
     private Dictionary<FIELDTAG, object> Fields = null;
-   
+
 
     private class Util
     {
-       private static IEnumerable<string> OptionLabels(int code)
+        private static IEnumerable<string> OptionLabels(int code)
         {
             string[] ord = new string[3];
             int n = 100;
@@ -62,7 +62,11 @@ Reset (button)
 
         public static void SetUpDropDown(Dictionary<FIELDTAG, object> _fields, int[] data)
         {
-            // TODO
+            List<Dropdown.OptionData> lst = new List<Dropdown.OptionData>();
+            foreach (string labl in OptionLabels(data[6])) lst.Add(new Dropdown.OptionData(labl));
+            var dropDown = (Dropdown)_fields[FIELDTAG.DROPDOWN];
+            dropDown.ClearOptions();
+            dropDown.AddOptions(lst);
         }
 
 
@@ -73,7 +77,7 @@ Reset (button)
             int score = data[0];
             string res = score.ToString();
             while (res.Length < 4) res = '0' + res;
-            res = string.Format(template,res);
+            res = string.Format(template, res);
             Text txt = (Text)_fields[FIELDTAG.SCORE];
             txt.text = res;
         }
@@ -88,7 +92,7 @@ Reset (button)
             |                        -> -----
             */
             #endregion
-            
+
             int[] ComputeOrd(int ordCode)
             {
                 int[] ord = new int[3];
@@ -117,12 +121,12 @@ Reset (button)
             {
                 string[] nms = new string[] { "Red", "Green", "Blue" };
                 int[] ord = ComputeOrd(dat[6]);
-                IEnumerable<string> _textBuilder = enu(nms,ord,dat);
-                string res = string.Join("\n",_textBuilder);
+                IEnumerable<string> _textBuilder = enu(nms, ord, dat);
+                string res = string.Join("\n", _textBuilder);
                 Text text = (Text)_fie[FIELDTAG.BIRDLIST];
                 text.text = res;
             }
-            Compute(_fields,data);
+            Compute(_fields, data);
         }
 
         /**
@@ -141,6 +145,13 @@ Reset (button)
     }
 
     #region helper-methods
+    private int[] GetDataArr()
+    {
+        int[] res = new int[GameController.SPPort.RequiredDataSize()];
+        GameController.SPPort.GetData(res);
+        return res;
+    }
+
     private void CollectFields() // initialize Fields and populate it
     {
         Fields = new Dictionary<FIELDTAG, object>();
@@ -189,10 +200,14 @@ Reset (button)
         ((Button)Fields[FIELDTAG.RESET]).onClick.AddListener(OnResetClick);
         #endregion
 
-        UpdateTextDisplays();
+        int[] data = GetDataArr();
+
+        UpdateTextDisplays(data);
+
+        Util.SetUpDropDown(Fields,data);
     }
 
-    private void UpdateTextDisplays(int[] data=null)
+    private void UpdateTextDisplays(int[] data = null)
     {
         int siz = GameController.SPPort.RequiredDataSize();
         if (data == null)
@@ -204,7 +219,7 @@ Reset (button)
         {
             if (data.Length < siz) throw new ArgumentException("input-array not big-enough");
         }
-        Util.UpdateScoreDisplay(Fields,data);
+        Util.UpdateScoreDisplay(Fields, data);
         Util.UpdateUnlockedBirdsDisplay(Fields, data);
     }
     #endregion
@@ -213,18 +228,20 @@ Reset (button)
     private static int count = 0;
     private void OnMenuClick()
     {
-        SceneFader.instance.StartFading(FlappyBirdUtil.FadeTime,FlappyBirdUtil.Names.MainMenuScene);
+        SceneFader.instance.StartFading(FlappyBirdUtil.FadeTime, FlappyBirdUtil.Names.MainMenuScene);
     }
     private void OnResetClick()
     {
         GameController.SPPort.ResetAll();
         UpdateTextDisplays();
+        ((Dropdown)Fields[FIELDTAG.DROPDOWN]).value = 0;
     }
     private void OnOverrideClick()
     {
-        // TODO
-        string nm = "OVERRIDE";
-        Debug.Log(string.Format("{0} | {1}", count++, nm));
+        int val = ((Dropdown)Fields[FIELDTAG.DROPDOWN]).value;
+        GameController.SPPort.OVERRIDE_UNLOCKED_BIRDS(val+1);
+        int[] data = GetDataArr();
+        Util.UpdateUnlockedBirdsDisplay(Fields,data);
     }
     #endregion
 
@@ -233,7 +250,8 @@ Reset (button)
     void OnEnable() { MakeInstance(); }
     void Start() {
         SetUp();
-        Debug.Log(string.Format("starting-settings | staticCount=={0} | instCount=={1}",count++,instCount++));
+        Debug.Log(string.Format("starting-settings | staticCount=={0} | instCount=={1}", count++, instCount++));
     }
 
+    
 }
