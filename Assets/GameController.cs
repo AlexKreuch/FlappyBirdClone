@@ -277,6 +277,11 @@ public class GameController : MonoBehaviour
 
             return res;
         }
+        public static int RequiredDataSize()
+        {
+            // Return the size of array needed for 'GetData' method-below
+            return 7;
+        }
         public static void GetData(int[] vals)
         {
             /**

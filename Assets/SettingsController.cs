@@ -6,6 +6,12 @@ using UnityEngine.UI;
 
 public class SettingsController : MonoBehaviour
 {
+    private static SettingsController instance;
+    private void MakeInstance()
+    {
+        if (instance != null) { Destroy(this); return; }
+        instance = this;
+    }
     /*
 Main-Menu (button)
 High-Score (text)
@@ -94,7 +100,83 @@ Reset (button)
         {
             // TODO
         }
+
+
+        public static void UpdateScoreDisplay(Dictionary<FIELDTAG, object> _fields, int[] data)
+        {
+            // HIGH-SCORE : 0000
+            const string template = "HIGH-SCORE : {0}";
+            int score = data[0];
+            string res = score.ToString();
+            while (res.Length < 4) res = '0' + res;
+            res = string.Format(template,res);
+            Text txt = (Text)_fields[FIELDTAG.SCORE];
+            txt.text = res;
+        }
+
+        public static void UpdateUnlockedBirdsDisplay(Dictionary<FIELDTAG, object> _fields, int[] data)
+        {
+            #region template
+            /*   
+            |UnlockedBirds : 
+            |                        -> -----
+            |                        -> -----
+            |                        -> -----
+            */
+            #endregion
+            
+            int[] ComputeOrd(int ordCode)
+            {
+                int[] ord = new int[3];
+                ord[0] = ((ordCode / 100) % 10) - 1;
+                ord[1] = ((ordCode / 10) % 10) - 1;
+                ord[2] = ((ordCode / 1) % 10) - 1;
+                return ord;
+            }
+            string GetNm(int ind, string[] nms, int[] ord) { return nms[ord[ind]]; }
+            bool GetUnl(int ind, int[] _data, int[] ord)
+            {
+                return _data[ord[ind] + 3] == 1;
+            }
+            IEnumerable<string> enu(string[] nms, int[] ord, int[] _data)
+            {
+                const string Header = "UnlockedBirds : ";
+                const string Line = "                        -> {0}";
+                yield return Header;
+                for (int i = 0; i < 3; i++)
+                {
+                    if (GetUnl(i, _data, ord)) yield return string.Format(Line, GetNm(i, nms, ord));
+                    else yield return "";
+                }
+            }
+            void Compute(Dictionary<FIELDTAG, object> _fie, int[] dat)
+            {
+                string[] nms = new string[] { "Red", "Green", "Blue" };
+                int[] ord = ComputeOrd(dat[6]);
+                IEnumerable<string> _textBuilder = enu(nms,ord,dat);
+                string res = string.Join("\n",_textBuilder);
+                Text text = (Text)_fie[FIELDTAG.BIRDLIST];
+                text.text = res;
+            }
+            Compute(_fields,data);
+        }
+
+        /**
+             * note : vals must be non-null and have at least 7 spaces.
+             *        vals will be populated by the return-data
+             *  key : 
+             *     vals[0] := HighScore
+             *     vals[1] := CurrentBird ( encoded as char cast to int )
+             *     vals[2] := Initialized ( encoded as 1:=True and 0:=False )
+             *     vals[3] := RedUnlocked ( encoded as 1:=True and 0:=False )
+             *     vals[4] := GreenUnlocked ( encoded as 1:=True and 0:=False )
+             *     vals[5] := BlueUnlocked ( encoded as 1:=True and 0:=False )
+             *     vals[6] := UnlockOrder  ( encoded as described in 'EncodeBirdOrder' above ) 
+             *     
+             */
     }
+
+
     private void SetUp()
     {
         CollectFields();
@@ -102,6 +184,12 @@ Reset (button)
         ((Button)Fields[FIELDTAG.MAIN]).onClick.AddListener(OnMenuClick);
         ((Button)Fields[FIELDTAG.OVERRIDE]).onClick.AddListener(OnOverrideClick);
         ((Button)Fields[FIELDTAG.RESET]).onClick.AddListener(OnResetClick);
+
+        int[] data = new int[ GameController.SPPort.RequiredDataSize() ];
+        GameController.SPPort.GetData(data);
+
+        Util.UpdateScoreDisplay(Fields,data);
+        Util.UpdateUnlockedBirdsDisplay(Fields,data);
     }
 
 
@@ -116,6 +204,7 @@ Reset (button)
         // TODO
         string nm = "RESET";
         Debug.Log(string.Format("{0} | {1}",count++,nm));
+        
     }
     private void OnOverrideClick()
     {
@@ -125,8 +214,8 @@ Reset (button)
     }
     #endregion
 
-    
 
+    void OnEnable() { MakeInstance(); }
     void Start() {
         SetUp();
         
