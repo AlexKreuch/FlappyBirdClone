@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 
 public class SettingsController : MonoBehaviour
@@ -31,44 +32,7 @@ Reset (button)
     }
 
     private Dictionary<FIELDTAG, object> Fields = null;
-    private void CollectFields() // initialize Fields and populate it
-    {
-        Fields = new Dictionary<FIELDTAG, object>();
-
-        #region declaire variables
-        Button[] buttons = null;
-        Text[] texts = null;
-        Dropdown[] dropdowns = null;
-        #endregion
-
-        #region get Buttons
-        buttons = FindObjectsOfType<Button>();
-        foreach (var btn in buttons) switch (btn.tag)
-            {
-                case FlappyBirdUtil.Tags.SettingsPageFields.MainMenu: Fields.Add(FIELDTAG.MAIN, btn); break;
-                case FlappyBirdUtil.Tags.SettingsPageFields.UnlockControl: Fields.Add(FIELDTAG.OVERRIDE, btn); break;
-                case FlappyBirdUtil.Tags.SettingsPageFields.ResetButton: Fields.Add(FIELDTAG.RESET, btn); break;
-            }
-        #endregion
-
-        #region get Texts
-        texts = FindObjectsOfType<Text>();
-        foreach (var txt in texts) switch (txt.tag)
-            {
-                case FlappyBirdUtil.Tags.SettingsPageFields.HighScore: Fields.Add(FIELDTAG.SCORE, txt); break;
-                case FlappyBirdUtil.Tags.SettingsPageFields.UnlockControl: Fields.Add(FIELDTAG.BIRDLIST, txt); break;
-            }
-        #endregion
-
-        #region get Dropdowns
-        dropdowns = FindObjectsOfType<Dropdown>();
-        foreach (var dd in dropdowns) switch (dd.tag)
-            {
-                case FlappyBirdUtil.Tags.SettingsPageFields.UnlockControl: Fields.Add(FIELDTAG.DROPDOWN, dd); break;
-            }
-        #endregion
-    }
-
+   
 
     private class Util
     {
@@ -176,22 +140,74 @@ Reset (button)
              */
     }
 
+    #region helper-methods
+    private void CollectFields() // initialize Fields and populate it
+    {
+        Fields = new Dictionary<FIELDTAG, object>();
+
+        #region declaire variables
+        Button[] buttons = null;
+        Text[] texts = null;
+        Dropdown[] dropdowns = null;
+        #endregion
+
+        #region get Buttons
+        buttons = FindObjectsOfType<Button>();
+        foreach (var btn in buttons) switch (btn.tag)
+            {
+                case FlappyBirdUtil.Tags.SettingsPageFields.MainMenu: Fields.Add(FIELDTAG.MAIN, btn); break;
+                case FlappyBirdUtil.Tags.SettingsPageFields.UnlockControl: Fields.Add(FIELDTAG.OVERRIDE, btn); break;
+                case FlappyBirdUtil.Tags.SettingsPageFields.ResetButton: Fields.Add(FIELDTAG.RESET, btn); break;
+            }
+        #endregion
+
+        #region get Texts
+        texts = FindObjectsOfType<Text>();
+        foreach (var txt in texts) switch (txt.tag)
+            {
+                case FlappyBirdUtil.Tags.SettingsPageFields.HighScore: Fields.Add(FIELDTAG.SCORE, txt); break;
+                case FlappyBirdUtil.Tags.SettingsPageFields.UnlockControl: Fields.Add(FIELDTAG.BIRDLIST, txt); break;
+            }
+        #endregion
+
+        #region get Dropdowns
+        dropdowns = FindObjectsOfType<Dropdown>();
+        foreach (var dd in dropdowns) switch (dd.tag)
+            {
+                case FlappyBirdUtil.Tags.SettingsPageFields.UnlockControl: Fields.Add(FIELDTAG.DROPDOWN, dd); break;
+            }
+        #endregion
+    }
 
     private void SetUp()
     {
         CollectFields();
 
+        #region connect buttons
         ((Button)Fields[FIELDTAG.MAIN]).onClick.AddListener(OnMenuClick);
         ((Button)Fields[FIELDTAG.OVERRIDE]).onClick.AddListener(OnOverrideClick);
         ((Button)Fields[FIELDTAG.RESET]).onClick.AddListener(OnResetClick);
+        #endregion
 
-        int[] data = new int[ GameController.SPPort.RequiredDataSize() ];
-        GameController.SPPort.GetData(data);
-
-        Util.UpdateScoreDisplay(Fields,data);
-        Util.UpdateUnlockedBirdsDisplay(Fields,data);
+        UpdateTextDisplays();
     }
 
+    private void UpdateTextDisplays(int[] data=null)
+    {
+        int siz = GameController.SPPort.RequiredDataSize();
+        if (data == null)
+        {
+            data = new int[siz];
+            GameController.SPPort.GetData(data);
+        }
+        else
+        {
+            if (data.Length < siz) throw new ArgumentException("input-array not big-enough");
+        }
+        Util.UpdateScoreDisplay(Fields,data);
+        Util.UpdateUnlockedBirdsDisplay(Fields, data);
+    }
+    #endregion
 
     #region onClickListeners
     private static int count = 0;
@@ -201,10 +217,8 @@ Reset (button)
     }
     private void OnResetClick()
     {
-        // TODO
-        string nm = "RESET";
-        Debug.Log(string.Format("{0} | {1}",count++,nm));
-        
+        GameController.SPPort.ResetAll();
+        UpdateTextDisplays();
     }
     private void OnOverrideClick()
     {
@@ -215,10 +229,11 @@ Reset (button)
     #endregion
 
 
+    private int instCount = 0;
     void OnEnable() { MakeInstance(); }
     void Start() {
         SetUp();
-        
+        Debug.Log(string.Format("starting-settings | staticCount=={0} | instCount=={1}",count++,instCount++));
     }
 
 }

@@ -23,7 +23,7 @@ public class GamePlayManager : MonoBehaviour
         char brd = GameController.GPPort.GetCurrentBird();
         var brdBox = Resources.Load<BirdResource>(FlappyBirdUtil.ResourcePaths.BirdRec);
         #if TESTING_MODE
-            brd = 'G';
+          //  brd = 'G';
         #endif
         #if (USING_INITIAL_BIRD && BIRD_IN_TESTING_MODE)
             Debug.Log(string.Format("~~ destroying initial-bird : {0}",Bird.instance.gameObject.name));
