@@ -117,6 +117,7 @@ public class FlappyBirdUtil : MonoBehaviour
             public const string HighScore = "HighScoreDisplay";
             public const string UnlockControl = "UnlockedBirdSetting";
             public const string ResetButton = "ResetAll";
+            public const string PromptPanel = "PromptPanel";
         }
         public const string FlapButtonTag = "FlapButton";
         public const string PauseButtonTag = "PauseButton";

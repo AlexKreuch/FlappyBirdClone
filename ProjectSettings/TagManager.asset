@@ -23,6 +23,7 @@ TagManager:
   - HighScoreDisplay
   - UnlockedBirdSetting
   - ResetAll
+  - PromptPanel
   layers:
   - Default
   - TransparentFX

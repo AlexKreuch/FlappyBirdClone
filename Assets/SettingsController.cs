@@ -29,6 +29,7 @@ Reset (button)
         DROPDOWN = 0b011,
         OVERRIDE = 0b100,
         RESET = 0b101,
+        PROMPT = 0b110
     }
 
     private Dictionary<FIELDTAG, object> Fields = null;
@@ -129,6 +130,82 @@ Reset (button)
             Compute(_fields, data);
         }
 
+        public class ConfirmDialog
+        {
+            #region field-names
+            const string imageName = "prompt_Background";
+            const string textName = "prompt_Text";
+            const string confirmBtnName = "Confirm";
+            const string cancelBtnName = "Cancel";
+            #endregion
+
+            #region fields
+            private GameObject panel = null;
+            private Image image = null;
+            private Text text = null;
+            private Button confirmButton = null;
+            private Button cancelButton = null;
+            #endregion
+
+            #region constructors
+            private ConfirmDialog() { }
+            private ConfirmDialog(GameObject panel, Image image, Text text, Button confirmButton, Button cancelButton)
+            {
+                this.panel = panel;
+                this.image = image;
+                this.text = text;
+                this.confirmButton = confirmButton;
+                this.cancelButton = cancelButton;
+            }
+            public static ConfirmDialog Create(GameObject panel)
+            {
+                if (panel == null) return null;
+
+                IEnumerable<Component> enu(GameObject _panel)
+                {
+                    Type[] types = new Type[] { typeof(Image), typeof(Text), typeof(Button) };
+                    foreach(Type type in types)
+                    {
+                        var lst = _panel.GetComponentsInChildren(type);
+                        foreach (var comp in lst)
+                        {
+                            yield return comp;
+                        }
+                    }
+                }
+
+                const int img = 0, txt = 1, conBtn = 2, canBtn = 3, siz = 4;
+
+                int count = 0;
+                Component[] arr = new Component[siz];
+
+                foreach (Component comp in enu(panel))
+                {
+                    switch (comp.name)
+                    {
+                        case imageName: arr[img] = comp; count++; break;
+                        case textName: arr[txt] = comp; count++; break;
+                        case confirmBtnName: arr[conBtn] = comp; count++; break;
+                        case cancelBtnName: arr[canBtn] = comp; count++; break;
+                    }
+                    if (count == siz) break;
+                }
+                if (count != siz) return null;
+                
+
+                return new ConfirmDialog
+                        (
+                            panel,
+                            arr[img].GetComponent<Image>(),
+                            arr[txt].GetComponent<Text>(),
+                            arr[conBtn].GetComponent<Button>(),
+                            arr[canBtn].GetComponent<Button>()
+                        );
+                
+            }
+            #endregion
+        }
+
         /**
              * note : vals must be non-null and have at least 7 spaces.
              *        vals will be populated by the return-data
@@ -143,6 +220,8 @@ Reset (button)
              *     
              */
     }
+
+    private Util.ConfirmDialog confirmDialog = null;
 
     #region helper-methods
     private int[] GetDataArr()
@@ -160,6 +239,7 @@ Reset (button)
         Button[] buttons = null;
         Text[] texts = null;
         Dropdown[] dropdowns = null;
+        GameObject[] panels = null;
         #endregion
 
         #region get Buttons
@@ -188,7 +268,18 @@ Reset (button)
                 case FlappyBirdUtil.Tags.SettingsPageFields.UnlockControl: Fields.Add(FIELDTAG.DROPDOWN, dd); break;
             }
         #endregion
+
+        #region get Panels
+        panels = FindObjectsOfType<GameObject>();
+        foreach (var pr in panels) switch (pr.tag)
+            {
+                case FlappyBirdUtil.Tags.SettingsPageFields.PromptPanel: Fields.Add(FIELDTAG.PROMPT, pr); break;
+            }
+        #endregion
     }
+
+    
+    
 
     private void SetUp()
     {
@@ -198,6 +289,11 @@ Reset (button)
         ((Button)Fields[FIELDTAG.MAIN]).onClick.AddListener(OnMenuClick);
         ((Button)Fields[FIELDTAG.OVERRIDE]).onClick.AddListener(OnOverrideClick);
         ((Button)Fields[FIELDTAG.RESET]).onClick.AddListener(OnResetClick);
+        #endregion
+
+        #region setup confirmDialog
+        confirmDialog = Util.ConfirmDialog.Create((GameObject)Fields[FIELDTAG.PROMPT]);
+        Debug.Assert( confirmDialog!=null , "SOMETHING-WENT-WRONG!!!" );
         #endregion
 
         int[] data = GetDataArr();

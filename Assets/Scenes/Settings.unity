@@ -721,8 +721,8 @@ GameObject:
   - component: {fileID: 591573650}
   - component: {fileID: 591573652}
   m_Layer: 5
-  m_Name: Panel
-  m_TagString: Untagged
+  m_Name: PromptPanel
+  m_TagString: PromptPanel
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -800,7 +800,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2a225e4c1042f3429bc88141a3cf548, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  info: 
+  btn_h: 0
+  dis_h: 0
+  dis_r: {x: 0, y: 0}
+  msg: 
 --- !u!1 &739189918
 GameObject:
   m_ObjectHideFlags: 0

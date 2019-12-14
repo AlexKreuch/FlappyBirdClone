@@ -6,7 +6,17 @@ using UnityEngine.UI;
 
 public class HELPER008 : MonoBehaviour
 {
-   
+
+    private class Counter
+    {
+        private const string ADDRESS = "counter-address";
+        public static int Val
+        {
+            get { return PlayerPrefs.GetInt(ADDRESS,0); }
+            set { PlayerPrefs.SetInt(ADDRESS,value); }
+        }
+    }
+
     const string imgNm = "prompt_Background";
     const string txtNm = "prompt_Text";
     const string confirmBtnName = "Confirm";
@@ -128,7 +138,11 @@ public class HELPER008 : MonoBehaviour
         text.text = msg;
     }
 
-    void Start() { _setup(); }
+    void Start()
+    {
+        Debug.Log("start-called : " + Counter.Val++);
+        _setup();
+    }
     void Update() { _update(); }
 
 
@@ -138,6 +152,15 @@ public class HELPER008 : MonoBehaviour
     dis_h := 690
     dir_r := (X=500 , Y=325)
     msg = "Are you sure?\n(this will reset-\ngame progress)"
+    */
+    #endregion
+
+    #region override-unlocked_birds-data
+    /*
+    btn_h := 530
+    dis_h := 690
+    dir_r := (X=615 , Y=170)
+    msg = "Override Unlocked-\nBirds?"
     */
     #endregion
 }
