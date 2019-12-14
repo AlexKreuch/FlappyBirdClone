@@ -147,6 +147,10 @@ Reset (button)
             private Button cancelButton = null;
             #endregion
 
+            private enum MODE { RESET, OVERRIDE, NONE }
+
+            private MODE mode = MODE.NONE;
+
             #region constructors
             private ConfirmDialog() { }
             private ConfirmDialog(GameObject panel, Image image, Text text, Button confirmButton, Button cancelButton)
@@ -156,6 +160,9 @@ Reset (button)
                 this.text = text;
                 this.confirmButton = confirmButton;
                 this.cancelButton = cancelButton;
+
+                this.confirmButton.onClick.AddListener( new UnityEngine.Events.UnityAction(this.ConfirmButtonHandler));
+                this.cancelButton.onClick.AddListener(new UnityEngine.Events.UnityAction(this.CancelButtonHandler));
             }
             public static ConfirmDialog Create(GameObject panel)
             {
@@ -202,6 +209,102 @@ Reset (button)
                             arr[canBtn].GetComponent<Button>()
                         );
                 
+            }
+            #endregion
+
+            #region display configuration
+            private struct DisplayConfig
+            {
+                public float promptPos;
+                public float buttonPos;
+                public Vector2 promptSize;
+                public string message;
+            }
+
+            private void SetConfig(DisplayConfig conf)
+            {
+                void SetYpos(float y, Transform transform)
+                {
+                    var tmp = transform.position;
+                    tmp.y = y;
+                    transform.position = tmp;
+                }
+                SetYpos(conf.buttonPos, confirmButton.transform);
+                SetYpos(conf.buttonPos, cancelButton.transform);
+                SetYpos(conf.promptPos, image.transform);
+                SetYpos(conf.promptPos, text.transform);
+
+                image.rectTransform.sizeDelta = conf.promptSize;
+                text.rectTransform.sizeDelta = conf.promptSize;
+
+                text.text = conf.message;
+            }
+
+            private static readonly DisplayConfig resetDialog = new DisplayConfig()
+            {
+                buttonPos = 470.0f,
+                promptPos = 690.0f,
+                promptSize = new Vector2(500.0f, 500.0f),
+                message = "Are you sure?\n(this will reset-\ngame progress)"
+            };
+            private static readonly DisplayConfig overrideDialog = new DisplayConfig()
+            {
+                buttonPos = 530.0f,
+                promptPos = 690.0f,
+                promptSize = new Vector2(615.0f, 170.0f),
+                message = "Override Unlocked-\nBirds?"
+            };
+            #endregion
+
+            #region Button-controls
+            private Action cancelAction = null;
+            private Action confirmAction = null;
+
+            private void CancelButtonHandler() { if (cancelAction != null) cancelAction(); }
+            private void ConfirmButtonHandler() { if (confirmAction != null) confirmAction(); }
+
+            public void SetButtons(Action cancel, Action confirm) { cancelAction = cancel; confirmAction = confirm; }
+            #endregion
+
+            #region display controls
+            public bool TurnedOn
+            {
+                get
+                {
+                    return panel.activeSelf;
+                }
+                set { panel.SetActive(value); }
+            }
+
+            public bool OverrideMode
+            {
+                get { return mode == MODE.OVERRIDE; }
+                set
+                {
+                    int flags = 0;
+                    if (value) flags += 2;
+                    if (mode == MODE.OVERRIDE) flags += 1;
+                    switch (flags)
+                    {
+                        case 1: mode = MODE.RESET; SetConfig(resetDialog); break;
+                        case 2: mode = MODE.OVERRIDE; SetConfig(overrideDialog); break;
+                    }
+                }
+            }
+            public bool ResetMode
+            {
+                get { return mode == MODE.RESET; }
+                set
+                {
+                    int flags = 0;
+                    if (value) flags += 2;
+                    if (mode == MODE.RESET) flags += 1;
+                    switch (flags)
+                    {
+                        case 1: mode = MODE.OVERRIDE; SetConfig(overrideDialog); break;
+                        case 2: mode = MODE.RESET; SetConfig(resetDialog); break;
+                    }
+                }
             }
             #endregion
         }
@@ -278,9 +381,6 @@ Reset (button)
         #endregion
     }
 
-    
-    
-
     private void SetUp()
     {
         CollectFields();
@@ -294,6 +394,7 @@ Reset (button)
         #region setup confirmDialog
         confirmDialog = Util.ConfirmDialog.Create((GameObject)Fields[FIELDTAG.PROMPT]);
         Debug.Assert( confirmDialog!=null , "SOMETHING-WENT-WRONG!!!" );
+        confirmDialog.TurnedOn = false;
         #endregion
 
         int[] data = GetDataArr();
@@ -335,9 +436,9 @@ Reset (button)
     private void OnOverrideClick()
     {
         int val = ((Dropdown)Fields[FIELDTAG.DROPDOWN]).value;
-        GameController.SPPort.OVERRIDE_UNLOCKED_BIRDS(val+1);
+        GameController.SPPort.OVERRIDE_UNLOCKED_BIRDS(val + 1);
         int[] data = GetDataArr();
-        Util.UpdateUnlockedBirdsDisplay(Fields,data);
+        Util.UpdateUnlockedBirdsDisplay(Fields, data);
     }
     #endregion
 
