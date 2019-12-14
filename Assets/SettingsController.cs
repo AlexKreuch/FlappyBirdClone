@@ -419,6 +419,26 @@ Reset (button)
         Util.UpdateScoreDisplay(Fields, data);
         Util.UpdateUnlockedBirdsDisplay(Fields, data);
     }
+
+    private void ConfirmReset()
+    {
+        confirmDialog.TurnedOn = false;
+        GameController.SPPort.ResetAll();
+        UpdateTextDisplays();
+        ((Dropdown)Fields[FIELDTAG.DROPDOWN]).value = 0;
+    }
+    private void ConfirmOverride()
+    {
+        confirmDialog.TurnedOn = false;
+        int val = ((Dropdown)Fields[FIELDTAG.DROPDOWN]).value;
+        GameController.SPPort.OVERRIDE_UNLOCKED_BIRDS(val + 1);
+        int[] data = GetDataArr();
+        Util.UpdateUnlockedBirdsDisplay(Fields, data);
+    }
+    private void CancelBtn()
+    {
+        confirmDialog.TurnedOn = false;
+    }
     #endregion
 
     #region onClickListeners
@@ -429,16 +449,15 @@ Reset (button)
     }
     private void OnResetClick()
     {
-        GameController.SPPort.ResetAll();
-        UpdateTextDisplays();
-        ((Dropdown)Fields[FIELDTAG.DROPDOWN]).value = 0;
+        confirmDialog.TurnedOn = true;
+        confirmDialog.ResetMode = true;
+        confirmDialog.SetButtons(CancelBtn, ConfirmReset);
     }
     private void OnOverrideClick()
     {
-        int val = ((Dropdown)Fields[FIELDTAG.DROPDOWN]).value;
-        GameController.SPPort.OVERRIDE_UNLOCKED_BIRDS(val + 1);
-        int[] data = GetDataArr();
-        Util.UpdateUnlockedBirdsDisplay(Fields, data);
+        confirmDialog.TurnedOn = true;
+        confirmDialog.OverrideMode = true;
+        confirmDialog.SetButtons(CancelBtn,ConfirmOverride);
     }
     #endregion
 
