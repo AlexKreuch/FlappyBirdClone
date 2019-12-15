@@ -85,7 +85,7 @@ public class BirdPicker : MonoBehaviour
         }
         public static bool IsValid(int val)
         {
-            return val == 0 || ToIndex_int(val) != 0;
+            return val == -1 || ToIndex_int(val) != 0;
         }
         public static bool IsValid(char val)
         {

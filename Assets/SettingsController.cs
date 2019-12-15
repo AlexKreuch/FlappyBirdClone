@@ -13,14 +13,7 @@ public class SettingsController : MonoBehaviour
         if (instance != null) { Destroy(this); return; }
         instance = this;
     }
-    /*
-Main-Menu (button)
-High-Score (text)
-UnlockedBird-list (text)
-OptionSlider (Dropdown)
-OVERRIDE (button)
-Reset (button)
-*/
+  
     private enum FIELDTAG // Use these to index the fields in the scene
     {
         MAIN = 0b000,
@@ -393,7 +386,6 @@ Reset (button)
 
         #region setup confirmDialog
         confirmDialog = Util.ConfirmDialog.Create((GameObject)Fields[FIELDTAG.PROMPT]);
-        Debug.Assert( confirmDialog!=null , "SOMETHING-WENT-WRONG!!!" );
         confirmDialog.TurnedOn = false;
         #endregion
 
@@ -442,7 +434,6 @@ Reset (button)
     #endregion
 
     #region onClickListeners
-    private static int count = 0;
     private void OnMenuClick()
     {
         SceneFader.instance.StartFading(FlappyBirdUtil.FadeTime, FlappyBirdUtil.Names.MainMenuScene);
@@ -461,13 +452,9 @@ Reset (button)
     }
     #endregion
 
-
-    private int instCount = 0;
+    
     void OnEnable() { MakeInstance(); }
-    void Start() {
-        SetUp();
-        Debug.Log(string.Format("starting-settings | staticCount=={0} | instCount=={1}", count++, instCount++));
-    }
+    void Start() { SetUp(); }
 
     
 }
