@@ -12,6 +12,26 @@ public class GamePlayManager : MonoBehaviour
     private Vector3 startingPosition = new Vector3(0f, 0f, 0f);
     private int highScore = 0;
 
+    #region control-curtain
+    private int curtainCode = SceneFader.NORMAL;
+    private void SetCurtain(char brd)
+    {
+        switch (brd)
+        {
+            case 'R': curtainCode = SceneFader.RED_UNL; break;
+            case 'G': curtainCode = SceneFader.GREEN_UNL; break;
+            case 'B': curtainCode = SceneFader.BLUE_UNL; break;
+            default: curtainCode = SceneFader.NORMAL; break;
+        }
+    }
+    private void GotoScene(string sceneName)
+    {
+        int cc = curtainCode;
+        curtainCode = SceneFader.NORMAL;
+        SceneFader.instance.StartFading(FlappyBirdUtil.FadeTime,sceneName,cc);
+    }
+    #endregion
+
 
     private void SetUp()
     {
@@ -68,14 +88,16 @@ public class GamePlayManager : MonoBehaviour
         var pausePanel = PausePanelController.instance;
         Bird.instance.SuspendMovement = true;
         Time.timeScale = 1f;
-        SceneFader.instance.StartFading(FlappyBirdUtil.FadeTime,FlappyBirdUtil.Names.GamePlayScene);
+        // SceneFader.instance.StartFading(FlappyBirdUtil.FadeTime,FlappyBirdUtil.Names.GamePlayScene);
+        GotoScene(FlappyBirdUtil.Names.GamePlayScene);
     }
     private void MenuButtonHandler()
     {
         ReportNewHighScore();
         Bird.instance.SuspendMovement = true;
         Time.timeScale = 1f;
-        SceneFader.instance.StartFading(FlappyBirdUtil.FadeTime,FlappyBirdUtil.Names.MainMenuScene);
+        //SceneFader.instance.StartFading(FlappyBirdUtil.FadeTime,FlappyBirdUtil.Names.MainMenuScene);
+        GotoScene(FlappyBirdUtil.Names.MainMenuScene);
     }
 
     private void UpdateHighScore()
@@ -102,7 +124,7 @@ public class GamePlayManager : MonoBehaviour
         else
         {
             PausePanelController.instance.SetMedal(FlappyBirdUtil.Flags.Medals.Gold);
-            GameController.GPPort.UnlockNextBird();
+            GameController.GPPort.UnlockNextBird(SetCurtain);
         }
     }
     private void RunGameOver()
