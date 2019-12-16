@@ -32,5 +32,18 @@ public class SpriteResource : MonoBehaviour
     }
     #endregion
 
-
+    #region CurtainSprites
+    [SerializeField]
+    private Sprite[] CurtainSprites = new Sprite[0]; // [ None , Red , Green , Blue ]
+    public class CurtainSpriteSet
+    {
+        private Sprite[] sprites = null;
+        public CurtainSpriteSet(Sprite[] sprites) { this.sprites = sprites; }
+        public Sprite Normal { get { return sprites[0]; } }
+        public Sprite RedUnlocked { get { return sprites[1]; } }
+        public Sprite GreenUnlocked { get { return sprites[2]; } }
+        public Sprite BlueUnlocked { get { return sprites[3]; } }
+    }
+    public CurtainSpriteSet GetCurtainSprites() { return new CurtainSpriteSet(CurtainSprites); }
+    #endregion
 }

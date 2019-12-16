@@ -60,3 +60,8 @@ MonoBehaviour:
   - {fileID: -1638759246192332772, guid: 7800e78ba23447d4db555eab9a9cdfa6, type: 3}
   - {fileID: 8285390259773680045, guid: 7800e78ba23447d4db555eab9a9cdfa6, type: 3}
   - {fileID: 3720059613459289301, guid: 7800e78ba23447d4db555eab9a9cdfa6, type: 3}
+  CurtainSprites:
+  - {fileID: 21300000, guid: 1505fec1cef8ffc45bebaac76a5a2b26, type: 3}
+  - {fileID: 21300000, guid: ad83b0585786d654a945d349f33db21e, type: 3}
+  - {fileID: 21300000, guid: efe19a052928bcd4cbc644f233785d0c, type: 3}
+  - {fileID: 21300000, guid: 80105869f72d2d14ebcce77503425926, type: 3}
