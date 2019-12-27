@@ -57,6 +57,12 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+Build04-0.1-v1.symbols.zip
+Bundle_00-0.1-v1.symbols.zip
+Bundle_00.aab
+Bundle_01-0.1000001-v1000001.symbols.zip
+Bundle_01.aab
+
 
 # Crashlytics generated file
 crashlytics-build.properties
